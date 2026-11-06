@@ -22,7 +22,9 @@ const uploadFile = async (req, res) => {
             originalName: req.file.originalname,
             description: req.body.FSfileDescription || '',
             category: category,
-            previewable: previewable
+            previewable: previewable,
+            markAsTrash: false,
+            markAsTrashDate: null,
         }
     });
 

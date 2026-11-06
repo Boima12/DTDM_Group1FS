@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import api from '../utils/axios.js';
+import api from '../../utils/axios.js';
 
 function Co_gridFS_Rename() {
     const [fileId, setFileId] = useState('');

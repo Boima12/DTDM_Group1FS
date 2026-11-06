@@ -2,28 +2,26 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/upload.js');
-const { 
-    uploadFile, 
-    getFilesInfo, 
-    downloadFile, 
-    renameFile,
-    deleteFile 
-} = require('../controllers/fsFile.js');
+const checkFileSize = require('../middleware/upload/upload_check.js');
+const { uploadFile } = require('../controllers/fsFile/uploads.js');
+const { getFilesInfo, getSpecificFileInfo } = require('../controllers/fsFile/lists.js');
+const { downloadFile } = require('../controllers/fsFile/downloads.js');
+const { renameFile, deleteFile } = require('../controllers/fsFile/updates.js');
 
-// POST /api/v1/fsfiles (upload multi-part file key "file")
-router.post('/', upload.single('file'), uploadFile);
 
-// GET /api/v1/fsfiles (list metadata)
-router.get('/', getFilesInfo);
+// UPLOAD
+router.post('/upload', upload.single('file'), checkFileSize, uploadFile);
 
-// GET /api/v1/fsfiles/:id (download / view file stream)
-router.get('/:id', downloadFile);
+// LIST
+router.get('/list/allFiles', getFilesInfo);
+router.get('/list/specificFile/:id', getSpecificFileInfo);
 
-// PUT /api/v1/fsfiles/:id (rename file)
-router.put('/:id', renameFile);
+// DOWNLOAD
+router.get('/download/:id', downloadFile);
 
-// DELETE /api/v1/fsfiles/:id (delete from GridFS)
-router.delete('/:id', deleteFile);
+// UPDATE
+router.put('/update/rename/:id', renameFile);
+router.delete('/update/delete/:id', deleteFile);
 
 
 module.exports = router;

@@ -7,7 +7,7 @@ function Co_gridFS_List() {
 
     const handleList = async () => {
         try {
-            const res = await api.get('/fsfiles');
+            const res = await api.get('/fsfiles/list/allFiles');
             setFiles(res.data.files);
             setError('');
         } catch (err) {

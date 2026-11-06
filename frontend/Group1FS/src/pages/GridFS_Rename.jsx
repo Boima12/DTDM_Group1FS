@@ -15,7 +15,7 @@ function Co_gridFS_Rename() {
         }
 
         try {
-            const res = await api.put(`/fsfiles/${fileId.trim()}`, {
+            const res = await api.put(`/fsfiles/update/rename/${fileId.trim()}`, {
                 filename: filename.trim()
             });
 

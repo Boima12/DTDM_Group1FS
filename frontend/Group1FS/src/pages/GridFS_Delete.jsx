@@ -14,7 +14,7 @@ function Co_gridFS_Delete() {
         }
 
         try {
-            const res = await api.delete(`/fsfiles/${fileId.trim()}`);
+            const res = await api.delete(`/fsfiles/update/delete/${fileId.trim()}`);
             setStatusMsg(`Success: ${res.data.msg}`);
             setFileId('');
         } catch (err) {

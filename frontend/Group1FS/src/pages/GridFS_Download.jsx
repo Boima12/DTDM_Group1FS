@@ -15,22 +15,23 @@ function Co_gridFS_Download() {
 
         try {
             setErrorMsg('');
-            // Request binary blob data from backend stream endpoint
-            const res = await api.get(`/fsfiles/${fileId.trim()}`, {
+            const res = await api.get(`/fsfiles/download/${fileId.trim()}`, {
                 responseType: 'blob',
             });
 
-            // Extract filename from headers or default fallback
+            // 1. Extract filename from Content-Disposition header
             const contentDisposition = res.headers['content-disposition'];
-            let filename = `downloaded_file_${fileId}`;
+            let filename = `file_${fileId.trim()}`; // Fallback if header is missing
+
             if (contentDisposition) {
-                const match = contentDisposition.match(/filename="?([^"]+)"?/);
+                // Decodes filenames (including spaces & special characters)
+                const match = contentDisposition.match(/filename="?([^";]+)"?/);
                 if (match && match[1]) {
-                    filename = match[1];
+                    filename = decodeURIComponent(match[1]);
                 }
             }
 
-            // Create temporary download link in DOM
+            // 2. Trigger browser file download
             const url = window.URL.createObjectURL(new Blob([res.data]));
             const link = document.createElement('a');
             link.href = url;
@@ -38,7 +39,7 @@ function Co_gridFS_Download() {
             document.body.appendChild(link);
             link.click();
 
-            // Cleanup DOM object
+            // 3. Cleanup
             link.remove();
             window.URL.revokeObjectURL(url);
         } catch (err) {

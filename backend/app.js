@@ -18,7 +18,8 @@ app.use(express.static('./public'))
 // Enable CORS (for development only, can be remove if put frontend into ./public)
 app.use(cors({
     origin: process.env.FRONTEND_URL,   // frontend vite default port is 5173
-    credentials: true,               
+    credentials: true,   
+    exposedHeaders: ['Content-Disposition']            
 }));
 
 // routes

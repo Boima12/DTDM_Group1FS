@@ -19,7 +19,7 @@ function Co_gridFS_Upload() {
         formData.append('FSfileDescription', description);
 
         try {
-            const res = await api.post('/fsfiles', formData, {
+            const res = await api.post('/fsfiles/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

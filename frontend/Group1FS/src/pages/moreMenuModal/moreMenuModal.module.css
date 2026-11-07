@@ -1,0 +1,55 @@
+.overlay {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+}
+
+.menu {
+    width: 220px;
+    box-sizing: border-box;
+    padding: 6px;
+    border: 1px solid #e8ebf2;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    font-family: 'Geist', sans-serif;
+}
+
+.menu button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 6px;
+    color: #34445b;
+    background: transparent;
+    text-align: left;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.menu button:hover {
+    color: #007a5c;
+    background: #e8fbf3;
+}
+
+.menu .destructive {
+    color: #d93838;
+}
+
+.menu .destructive:hover {
+    color: #c62828;
+    background: #fff0f0;
+}

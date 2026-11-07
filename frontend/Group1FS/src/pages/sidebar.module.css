@@ -1,0 +1,147 @@
+.sidebar {
+    width: 264px;
+    min-width: 264px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 20px;
+    background: #ffffff;
+    border-right: 1px solid #eef0f7;
+    color: #17243b;
+    font-family: 'Geist', sans-serif;
+}
+
+.sidebar button {
+    font-family: inherit;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 3px 8px 26px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.brandIcon {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    color: #ffffff;
+    background: #007a5c;
+}
+
+.uploadButton {
+    border: 0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 40px;
+    color: #ffffff;
+    background: #007a5c;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.uploadButton:hover {
+    background: #00684e;
+}
+
+.navigation {
+    display: grid;
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.navItem {
+    min-height: 35px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 11px;
+    border-radius: 6px;
+    color: #334155;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.navItem:hover,
+.navItem.active {
+    color: #006c51;
+    background: #b6f5dc;
+}
+
+.count {
+    margin-left: auto;
+    color: #657187;
+    font-size: 12px;
+}
+
+.trashCount {
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #e23b3b;
+    background: #ffd8d8;
+}
+
+.storage {
+    margin-top: auto;
+    padding: 12px;
+    border-radius: 7px;
+    background: #f0f5ff;
+    color: #607087;
+    font-size: 11px;
+}
+
+.storageHeader,
+.storageFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.storageHeader span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #203d56;
+}
+
+.storageHeader strong {
+    color: #007a5c;
+    font-weight: 600;
+}
+
+.progressTrack {
+    height: 5px;
+    margin: 9px 0;
+    overflow: hidden;
+    border-radius: 5px;
+    background: #cbdcf9;
+}
+
+.progressTrack span {
+    display: block;
+    width: 28%;
+    height: 100%;
+    border-radius: inherit;
+    background: #007a5c;
+}
+
+@media (max-width: 700px) {
+    .sidebar {
+        width: 208px;
+        min-width: 208px;
+        padding: 15px 12px;
+    }
+}

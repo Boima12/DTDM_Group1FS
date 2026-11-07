@@ -18,6 +18,30 @@
 <br><br>
 
 
+## (QUAN TRỌNG) Cấu hình lần đầu sau khi mới clone về
+### I. Cấu hình frontend
+1. đầu tiên cd vô thư mục frontend, tải các package npm
+```cmd
+cd frontend\Template_GridFS
+npm install 
+```
+
+2. Cóp file `frontend\Group1FS\.env.example` và chỉnh tên thành `frontend\Group1FS\.env`
+<br><br>
+
+
+### II. Cấu hình backend
+1. cd vô thư mục backend, tải các package npm
+```cmd
+cd backend 
+npm install
+```
+
+2. Cóp file `backend\.env.example` và chỉnh tên thành `backend\.env`, sửa các thông tin:
+- MONGO_URI: Mình đã gửi trong Trello, các bạn vào Trello mục để lấy
+<br><br>
+
+
 ## Quy tắc branch/push lên Github
 - Branch Main đã được bảo vệ nên không thể push trực tiếp vào main, chỉ có thể pull request để các member review rồi sau đó mới gộp vào main
 

@@ -1,0 +1,58 @@
+.widget {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 50;
+    width: 384px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 10%), 0 8px 10px -6px rgb(0 0 0 / 10%);
+    font-family: 'Geist', sans-serif;
+}
+
+.header {
+    height: 42px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    color: #f8f9ff;
+    background: #213145;
+}
+
+.headerTitle, .titleGroup, .headerActions, .itemIdentity, .completed {
+    display: flex;
+    align-items: center;
+}
+
+.headerTitle { gap: 6px; }
+.titleGroup { gap: 4px; }
+.liveDot { width: 10px; height: 10px; flex-shrink: 0; border-radius: 50%; background: #85f8c4; }
+.title { margin: 0; font-size: 13px; font-weight: 600; line-height: 16px; white-space: nowrap; }
+.processingCount { margin: 0; color: #85f5c4; font-family: monospace; font-size: 12px; line-height: 16px; white-space: nowrap; }
+.headerActions { gap: 4px; color: rgb(248 249 255 / 80%); }
+.widget-icon-button { display: flex; align-items: center; justify-content: center; padding: 4px; border: 0; border-radius: 2px; color: inherit; background: transparent; cursor: pointer; }
+.widget-icon-button:hover { color: #fff; }
+.widget-icon-button:focus-visible { outline: 2px solid #85f8c4; outline-offset: 1px; }
+.rotated { transform: rotate(180deg); }
+.body { display: flex; flex-direction: column; gap: 12px; padding: 12px; background: #fff; }
+.summary { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; border-radius: 4px; background: #eff4ff; }
+.summaryLabel { color: #6d7a72; font-size: 11px; }
+.summaryValue { color: #0b1c30; font-family: monospace; font-size: 12px; }
+.item { display: flex; flex-direction: column; gap: 6px; }
+.itemHeader { display: flex; align-items: flex-start; justify-content: space-between; }
+.itemIdentity { min-width: 0; gap: 8px; }
+.itemIcon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 6px; color: #0b1c30; background: #d3e4fe; }
+.itemCopy { min-width: 0; }
+.itemName { overflow: hidden; margin: 0; color: #0b1c30; font-size: 13px; font-weight: 500; line-height: 16px; text-overflow: ellipsis; white-space: nowrap; }
+.itemStatus { margin: 2px 0 0; color: #6d7a72; font-family: monospace; font-size: 12px; line-height: 16px; }
+.completed { gap: 4px; color: #006947; font-family: 'Geist', sans-serif; }
+.cancelIcon { flex-shrink: 0; color: #6d7a72; }
+.progressTrack { height: 6px; overflow: hidden; border-radius: 999px; background: #dce9ff; }
+.progressValue { height: 100%; border-radius: inherit; background: #006948; transition: width 300ms ease; }
+
+@media (max-width: 520px) {
+    .widget { right: 12px; bottom: 12px; width: calc(100% - 24px); }
+}

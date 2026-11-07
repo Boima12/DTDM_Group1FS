@@ -38,7 +38,7 @@ npm install
 ```
 
 2. Cóp file `backend\.env.example` và chỉnh tên thành `backend\.env`, sửa các thông tin:
-- MONGO_URI: Mình đã gửi trong Trello, các bạn vào Trello mục để lấy
+- MONGO_URI: Mình đã gửi trong Trello, các bạn vào Trello mục "CẤU HÌNH LẦN ĐẦU" để lấy
 <br><br>
 
 

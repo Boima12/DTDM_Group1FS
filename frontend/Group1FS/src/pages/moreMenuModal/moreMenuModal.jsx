@@ -19,7 +19,7 @@ function Co_moreMenuModal({
     onRename, 
     onDelete, 
     onInfo, 
-    onPreview 
+    onPreview,
 }) {
     const activeFileId = file?._id || fileId;
 
@@ -81,10 +81,15 @@ function Co_moreMenuModal({
         }
     };
 
+    const executeRename = () => {
+        onRename(activeFileId);
+        onClose?.();
+    }
+
     const menuOptions = [
         { label: 'Xem trước', icon: Eye, action: onPreview },
         { label: 'Tải xuống', icon: Download, action: executeDownload },
-        { label: 'Đổi tên', icon: Pencil, action: onRename },
+        { label: 'Đổi tên', icon: Pencil, action: executeRename },
         { label: 'Thông tin tệp tin', icon: Info, action: onInfo },
         { label: 'Chuyển vào thùng rác', icon: Trash2, action: onDelete, destructive: true },
     ];

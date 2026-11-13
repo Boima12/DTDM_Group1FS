@@ -1,5 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const { getGridBucket } = require('../../db/connect.js');
+const { getMetadataFromFilename } = require('../../utils/fileHelpers.js');
 const mongoose = require('mongoose');
 
 
@@ -22,7 +23,35 @@ const renameFile = async (req, res) => {
         }
 
         await bucket.rename(_id, filename);
-        res.status(StatusCodes.OK).json({ msg: "File renamed successfully", newFilename: filename });
+
+        const { extension, contentType, category, previewable } = getMetadataFromFilename(filename);
+
+        const filesCollection = mongoose.connection.db.collection(`${bucket.s.options.bucketName}.files`);
+            await filesCollection.updateOne(
+                { _id },
+                {
+                    $set: {
+                        'metadata.originalName': filename,
+                        'metadata.extension': extension,
+                        'metadata.contentType': contentType,
+                        'metadata.category': category,
+                        'metadata.previewable': previewable,
+                    },
+                }
+            );
+
+            res.status(StatusCodes.OK).json({
+                msg: "File renamed successfully",
+                newFilename: filename,
+                metadata: {
+                    originalName: filename,
+                    extension,
+                    contentType,
+                    category,
+                    previewable,
+                },
+            }
+        );
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: err.message });
     }

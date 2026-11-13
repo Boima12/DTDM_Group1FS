@@ -11,10 +11,18 @@ import Co_trashBin from './trashBin/trashBin.jsx';
 import Co_searchTrashBin from './trashBin/searchTrashBin.jsx';
 import Co_confirmDeleteModal from './trashBin/confirmDeleteModal.jsx';
 import Co_confirmDeleteSelectedModal from './trashBin/confirmDeleteSelectedModal.jsx';
+import Co_notificationPopup from './notificationPopup/notificationPopup.jsx';
 
 function Co_mainContainer({ uploadVisible, onCloseUpload }) {
+    const [activeMessage, setActiveMessage] = useState("");
+    const [messageKey, setMessageKey] = useState(0);
+
+    const [requestMyDriveRefresh, setRequestMyDriveRefresh] = useState(false);
     const [moreMenuVisible, setMoreMenuVisible] = useState(false);
+    const [moreMenuFile, setMoreMenuFile] = useState(null);
     const [moreMenuFileId, setMoreMenuFileId] = useState(null);
+    const [renameModalVisible, setRenameModalVisible] = useState(false);
+    const [renameModalFileId, setRenameModalFileId] = useState(null);
     const [uploadProgress, setUploadProgress] = useState({
         visible: false,
         items: [],
@@ -22,10 +30,25 @@ function Co_mainContainer({ uploadVisible, onCloseUpload }) {
         completed: false,
     });
 
-    const handleOpenMoreMenu = (fileId) => {
-        setMoreMenuFileId(fileId);
+    const showNotification = (message) => {
+        setActiveMessage(message);
+        setMessageKey((currentKey) => currentKey + 1);
+    };
+
+    const handleRequestMyDriveRefresh = (toggle) => {
+        setRequestMyDriveRefresh(toggle);
+    }
+
+    const handleOpenMoreMenu = (file) => {
+        setMoreMenuFile(file);
+        setMoreMenuFileId(file._id);
         setMoreMenuVisible(true);
     };
+
+    const handleOpenRenameModal = (fileId) => {
+        setRenameModalFileId(fileId);
+        setRenameModalVisible(true);
+    }
 
     const handleUploadStart = (items) => {
         setUploadProgress({
@@ -56,20 +79,35 @@ function Co_mainContainer({ uploadVisible, onCloseUpload }) {
     return(
         <main style={{ flex: 1, minWidth: 0 }}>
             {/* modals/widget that appear on top of the main content */}
+            <Co_notificationPopup
+                message={activeMessage}
+                messageKey={messageKey}
+            />
+
             <Co_moreMenuModal
                 visible={moreMenuVisible}
                 fileId={moreMenuFileId}
                 onClose={() => setMoreMenuVisible(false)}
+                onRename={handleOpenRenameModal}
             />
             <Co_fileDetailModal />
             <Co_previewModal />
-            <Co_renameModal />
+            <Co_renameModal 
+                visible={renameModalVisible}
+                file={moreMenuFile}
+                fileId={renameModalFileId}
+                onClose={() => setRenameModalVisible(false)}
+                onRefresh={handleRequestMyDriveRefresh}
+                onNotification={showNotification}
+            />
             <Co_dragAndDropModal
                 visible={uploadVisible}
                 onClose={onCloseUpload}
                 onUploadStart={handleUploadStart}
                 onUploadProgress={handleUploadProgress}
                 onUploadComplete={handleUploadComplete}
+                onNotification={showNotification}
+                onRefresh={handleRequestMyDriveRefresh}
             />
             <Co_progressWidget
                 visible={uploadProgress.visible}
@@ -82,7 +120,12 @@ function Co_mainContainer({ uploadVisible, onCloseUpload }) {
             <Co_confirmDeleteSelectedModal />
 
             {/* main content, only 1 can be displayed at a time */}
-            <Co_myDrive onOpenMoreMenu={handleOpenMoreMenu} />
+            <Co_myDrive 
+                onRequestRefresh={requestMyDriveRefresh}
+                onRefresh={handleRequestMyDriveRefresh}
+                onOpenMoreMenu={handleOpenMoreMenu} 
+                onNotification={showNotification}
+            />
             <Co_searchNormal />
             <Co_trashBin />
             <Co_searchTrashBin />

@@ -43,7 +43,22 @@
 .breadcrumb strong { color: #17243b; font-size: 17px; }
 .headingRow { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-shrink: 0; }
 .categoryTabs { display: flex; gap: 6px; flex-wrap: wrap; }
-.categoryTabs button { border: 1px solid #e8ebf3; border-radius: 18px; display: inline-flex; align-items: center; gap: 5px; padding: 7px 10px; color: #425169; background: #fff; font: inherit; font-size: 11px; cursor: pointer; }
+
+.categoryTabs button { 
+    border: 1px solid #e8ebf3; 
+    border-radius: 18px; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 5px; 
+    padding: 7px 10px; 
+    color: #425169; 
+    background: #fff; 
+    font: inherit; 
+    font-size: 11px; 
+    cursor: pointer; 
+    transition: all 0.3s ease;
+}
+
 .categoryTabs button:hover, .categoryTabs .categoryActive { color: #fff; border-color: #007a5c; background: #007a5c; }
 .viewToggle { display: flex; padding: 4px; border-radius: 5px; background: #edf3ff; }
 .viewToggle button { padding: 7px; color: #516176; border-radius: 5px; }
@@ -52,7 +67,32 @@
 .toolbar span { display: inline-flex; align-items: center; gap: 4px; }
 .toolbar strong { color: #25344d; }
 .toolbarActions { display: flex; gap: 6px; margin-left: auto; }
-.toolbarActions button { display: inline-flex; align-items: center; gap: 5px; padding: 8px 10px; border: 1px solid #edf0f5; border-radius: 5px; color: #43516a; background: #fff; font: inherit; font-size: 11px; cursor: pointer; }
+
+.toolbarActions button { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 5px; 
+    padding: 8px 10px; 
+    border: 1px solid #edf0f5; 
+    border-radius: 5px; 
+    color: #43516a; 
+    background: #fff; 
+    font: inherit; 
+    font-size: 11px; 
+    cursor: pointer; 
+    transition: all 0.3s ease;
+}
+
+.toolbarActions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.toolbarActions button:hover {
+    color: #fff;
+    border-color: #007a5c; 
+    background: #007a5c;
+}
 
 /* Scrollable Container Fixes */
 .tableWrap { 
@@ -64,7 +104,17 @@
     box-shadow: 0 5px 18px rgba(48, 71, 122, .06); 
 }
 
-.tableRow { min-height: 64px; box-sizing: border-box; display: grid; grid-template-columns: 42px minmax(240px, 2fr) minmax(100px, .7fr) minmax(135px, 1fr) minmax(125px, 1fr) 55px; align-items: center; gap: 10px; padding: 0 12px; border-bottom: 1px solid #e9edf4; }
+.tableRow { 
+    min-height: 64px; 
+    box-sizing: border-box; 
+    display: grid; 
+    grid-template-columns: 42px minmax(240px, 2fr) minmax(100px, .7fr) minmax(135px, 1fr) minmax(125px, 1fr) 55px; 
+    align-items: center; 
+    gap: 10px; 
+    padding: 0 12px; 
+    border-bottom: 1px solid #e9edf4; 
+    transition: all 0.3s ease;
+}
 
 .tableHeader { 
     position: sticky; 
@@ -132,8 +182,9 @@
     border-radius: 9px; 
     background: #fff; 
     box-shadow: 0 5px 18px rgba(48, 71, 122, .06); 
+    transition: all 0.3s ease;
 }
-.selectedCard { border-color: #00c98b; }
+.selectedCard { border-color: #19E089; background: #97F5CC80; }
 .cardPreview { height: 145px; position: relative; display: flex; align-items: center; justify-content: center; color: #007a5c; background: #eff3ff; }
 .cardPreview img { width: 100%; height: 100%; object-fit: cover; }
 .cardPreview > span { width: 64px; height: 64px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: #fff; }

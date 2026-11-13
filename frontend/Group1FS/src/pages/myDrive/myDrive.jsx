@@ -20,7 +20,12 @@ import {
 import api from '../../utils/axios.js';
 import styles from './myDrive.module.css';
 
-function Co_myDrive({ onOpenMoreMenu }) {
+function Co_myDrive({ 
+    onRequestRefresh,
+    onRefresh,
+    onOpenMoreMenu,
+    onNotification,
+}) {
     const [files, setFiles] = useState([]);
     const [error, setError] = useState('');
     const [view, setView] = useState('list');
@@ -44,6 +49,23 @@ function Co_myDrive({ onOpenMoreMenu }) {
     useEffect(() => {
         handleListAllFiles();
     }, []);
+
+    useEffect(() => {
+        if (onRequestRefresh) {
+            handleListAllFiles();
+            onRefresh(false);
+        }
+    }, [onRequestRefresh, onRefresh]);
+
+    const handleRefresh = () => {
+        try {
+            handleListAllFiles();
+        } catch (err) {
+            onNotification?.(`Error refreshing files: ${err.response?.data?.msg || err.message}`);
+        } finally {
+            onNotification?.('Refresh completed');
+        }
+    };
 
     const getCategory = (file) => file.metadata?.category || 'other';
     const filteredFiles = category === 'all'
@@ -143,7 +165,7 @@ function Co_myDrive({ onOpenMoreMenu }) {
                     <input type="search" placeholder="Tìm kiếm tệp, thư mục, định dạng..." />
                     <kbd>/</kbd>
                 </label>
-                <button className={styles.iconButton} type="button" onClick={handleListAllFiles} title="Làm mới" aria-label="Làm mới danh sách">
+                <button className={styles.iconButton} type="button" onClick={handleRefresh} title="Làm mới" aria-label="Làm mới danh sách">
                     <RefreshCw size={18} className={loading ? styles.spinning : ''} />
                 </button>
                 <button className={styles.profile} type="button" aria-label="Tài khoản">T</button>
@@ -206,14 +228,14 @@ function Co_myDrive({ onOpenMoreMenu }) {
                                 <button className={styles.checkbox} type="button" onClick={() => toggleSelected(file._id)} aria-label={`Chọn ${file.filename}`}>
                                     {selected.includes(file._id) && <Check size={14} />}
                                 </button>
-                                <span className={styles.fileName}><span className={styles.fileIcon}>{fileIcon(file)}</span><span><strong>{file.metadata?.originalName || file.filename}</strong><small>{file.metadata?.contentType || 'application/octet-stream'}</small></span></span>
+                                <span className={styles.fileName}><span className={styles.fileIcon}>{fileIcon(file)}</span><span><strong>{file?.filename || file.metadata.originalName}</strong><small>{file.metadata?.contentType || 'application/octet-stream'}</small></span></span>
                                 <span>{formatSize(file.length)}</span><span>{formatDate(file.uploadDate)}</span><span className={styles.documentId}>{file._id}</span>
                                 <div className={styles.moreWrapper}>
                                     <button
                                         className={styles.moreButton}
                                         type="button"
                                         aria-label={`Tùy chọn ${file.filename}`}
-                                        onClick={() => onOpenMoreMenu(file._id)}
+                                        onClick={() => onOpenMoreMenu(file)}
                                     >
                                         <MoreVertical size={18} />
                                     </button>
@@ -235,7 +257,7 @@ function Co_myDrive({ onOpenMoreMenu }) {
                                             className={styles.cardMenu}
                                             type="button"
                                             aria-label={`Tùy chọn ${file.filename}`}
-                                            onClick={() => onOpenMoreMenu(file._id)}
+                                            onClick={() => onOpenMoreMenu(file)}
                                         >
                                             <MoreVertical size={18} />
                                         </button>
@@ -244,7 +266,7 @@ function Co_myDrive({ onOpenMoreMenu }) {
                                         <button className={styles.cardSelect} type="button" onClick={() => toggleSelected(file._id)} aria-label={`Chọn ${file.filename}`}>
                                             {selected.includes(file._id) ? <Check size={14} /> : null}
                                         </button>
-                                        <strong>{file.metadata?.originalName || file.filename}</strong>
+                                        <strong>{file?.filename || file.metadata.originalName}</strong>
                                         <small>{formatSize(file.length)} · {formatDate(file.uploadDate)}</small>
                                     </div>
                                 </article>

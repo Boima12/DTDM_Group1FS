@@ -1,0 +1,416 @@
+.overlay {
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: rgba(33, 49, 69, 0.4);
+  backdrop-filter: blur(4px);
+  animation: overlayIn 180ms ease-out both;
+}
+
+.modal {
+  display: flex;
+  width: min(576px, 100%);
+  max-height: min(942px, calc(100dvh - 24px));
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: modalIn 200ms ease-out both;
+}
+
+.header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heading h2 {
+  color: #0b1c30;
+  font-family: "Geist:SemiBold", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.18px;
+}
+
+.infoIcon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  place-items: center;
+  border-radius: 4px;
+  background: #97f5cc;
+}
+
+.infoIcon img {
+  width: 16.667px;
+  height: 16.667px;
+}
+
+.closeIconButton {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  cursor: pointer;
+  place-items: center;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  transition:
+    background-color 150ms ease,
+    transform 150ms ease;
+}
+
+.closeIconButton:hover {
+  background: #eff4ff;
+}
+
+.closeIconButton:active {
+  transform: scale(0.94);
+}
+
+.closeIconButton img {
+  width: 11.667px;
+  height: 11.667px;
+}
+
+.content {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 20px;
+  overflow: auto;
+  padding: 12px 20px;
+}
+
+.fileSummary {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #eff4ff;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.fileIcon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  flex: none;
+  place-items: center;
+  border-radius: 8px;
+  background: #d1defa;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.fileIcon img {
+  width: 26.667px;
+  height: 26.667px;
+}
+
+.fileText {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.fileText strong {
+  overflow: hidden;
+  color: #0b1c30;
+  font-family: "Geist:SemiBold", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileText span {
+  padding-top: 2px;
+  color: #3d4a42;
+  font-family: "JetBrains Mono:Regular", monospace;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+.information {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.information h3 {
+  color: #6d7a72;
+  font-family: "Geist:SemiBold", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: 0.55px;
+}
+
+.detailCard {
+  overflow: hidden;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.detailRow {
+  display: flex;
+  min-height: 32px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px;
+}
+
+.alternateRow,
+.locationBlock {
+  background: rgba(239, 244, 255, 0.4);
+}
+
+.detailLabel {
+  flex: none;
+  color: #3d4a42;
+  font-family: "Geist:Regular", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+.valueGroup {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.detailValue {
+  max-width: 300px;
+  overflow: hidden;
+  color: #0b1c30;
+  font-family: "JetBrains Mono:Regular", monospace;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.valueGroup:has(.copyButton) .detailValue {
+  max-width: 240px;
+  font-family: "JetBrains Mono:Medium", monospace;
+  font-weight: 700;
+}
+
+.accentValue {
+  color: #006948;
+}
+
+.copyButton {
+  position: relative;
+  display: grid;
+  width: 16px;
+  height: 21px;
+  flex: none;
+  cursor: pointer;
+  place-items: center;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+}
+
+.copyButton:hover {
+  background: rgba(109, 122, 114, 0.1);
+}
+
+.copyButton img {
+  width: 11.333px;
+  height: 13.333px;
+}
+
+.copyFeedback {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 4px);
+  width: max-content;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: #0b1c30;
+  color: white;
+  font-family: "Geist:Regular", sans-serif;
+  font-size: 10px;
+  line-height: 12px;
+  pointer-events: none;
+}
+
+.copyFeedback:empty {
+  display: none;
+}
+
+.locationBlock {
+  padding: 8px;
+}
+
+.locationBlock h4 {
+  color: #3d4a42;
+  font-family: "Geist:Medium", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.locationBlock dl {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 6px;
+  padding-left: 8px;
+}
+
+.locationBlock dl div {
+  display: flex;
+  min-width: 0;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.locationBlock dt {
+  flex: none;
+  color: #6d7a72;
+  font-family: "Geist:Regular", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+.locationBlock dd {
+  min-width: 0;
+  overflow: hidden;
+  color: #0b1c30;
+  font-family: "JetBrains Mono:Regular", monospace;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.footer {
+  display: flex;
+  flex: none;
+  justify-content: flex-end;
+  padding: 12px 20px;
+  background: #eff4ff;
+}
+
+.closeButton {
+  cursor: pointer;
+  padding: 8px 20px;
+  border: 0;
+  border-radius: 4px;
+  background: #fff;
+  color: #0b1c30;
+  font-family: "Geist:Medium", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.closeButton:hover {
+  background: #f9fbff;
+  box-shadow: 0 2px 5px rgba(11, 28, 48, 0.12);
+}
+
+.closeButton:active {
+  transform: translateY(1px);
+}
+
+.closeButton:focus-visible,
+.closeIconButton:focus-visible,
+.copyButton:focus-visible {
+  outline: 2px solid #00a878;
+  outline-offset: 2px;
+}
+
+@keyframes overlayIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+}
+
+@media (max-width: 520px) {
+  .header,
+  .content,
+  .footer {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .detailRow {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .valueGroup,
+  .detailValue {
+    width: 100%;
+    max-width: none;
+  }
+
+  .valueGroup:has(.copyButton) .detailValue {
+    max-width: calc(100% - 20px);
+  }
+
+  .locationBlock dl div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .locationBlock dd {
+    width: 100%;
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .modal {
+    animation: none;
+  }
+}

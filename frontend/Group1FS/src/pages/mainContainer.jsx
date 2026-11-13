@@ -23,6 +23,7 @@ function Co_mainContainer({ uploadVisible, onCloseUpload }) {
     const [moreMenuFileId, setMoreMenuFileId] = useState(null);
     const [renameModalVisible, setRenameModalVisible] = useState(false);
     const [renameModalFileId, setRenameModalFileId] = useState(null);
+    const [fileDetailModalVisible, setFileDetailModalVisible] = useState(false);
     const [uploadProgress, setUploadProgress] = useState({
         visible: false,
         items: [],
@@ -48,6 +49,10 @@ function Co_mainContainer({ uploadVisible, onCloseUpload }) {
     const handleOpenRenameModal = (fileId) => {
         setRenameModalFileId(fileId);
         setRenameModalVisible(true);
+    }
+
+    const handleOpenFileDetailModal = () => {
+        setFileDetailModalVisible(true);
     }
 
     const handleUploadStart = (items) => {
@@ -89,9 +94,17 @@ function Co_mainContainer({ uploadVisible, onCloseUpload }) {
                 fileId={moreMenuFileId}
                 onClose={() => setMoreMenuVisible(false)}
                 onRename={handleOpenRenameModal}
+                onInfo={handleOpenFileDetailModal}
             />
-            <Co_fileDetailModal />
+
+            <Co_fileDetailModal 
+                file={moreMenuFile}
+                visible={fileDetailModalVisible}
+                onClose={() => setFileDetailModalVisible(false)}
+            />
+
             <Co_previewModal />
+
             <Co_renameModal 
                 visible={renameModalVisible}
                 file={moreMenuFile}

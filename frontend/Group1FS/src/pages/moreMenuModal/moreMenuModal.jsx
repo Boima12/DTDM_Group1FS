@@ -86,11 +86,16 @@ function Co_moreMenuModal({
         onClose?.();
     }
 
+    const executeInfo = () => {
+        onInfo?.();
+        onClose?.();
+    }
+
     const menuOptions = [
         { label: 'Xem trước', icon: Eye, action: onPreview },
         { label: 'Tải xuống', icon: Download, action: executeDownload },
         { label: 'Đổi tên', icon: Pencil, action: executeRename },
-        { label: 'Thông tin tệp tin', icon: Info, action: onInfo },
+        { label: 'Thông tin tệp tin', icon: Info, action: executeInfo },
         { label: 'Chuyển vào thùng rác', icon: Trash2, action: onDelete, destructive: true },
     ];
 

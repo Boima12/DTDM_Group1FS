@@ -256,6 +256,57 @@
     box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
 }
 
+.document-preview {
+    display: block;
+    width: min(900px, 85vw);
+    height: min(calc(100dvh - 120px), 856px);
+    border: 0;
+    background: white;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+.media-preview {
+    display: block;
+    width: min(900px, 85vw);
+    max-height: min(calc(100dvh - 120px), 856px);
+    background: #0b1c30;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+.audio-preview {
+    width: min(520px, 85vw);
+}
+
+.text-preview {
+    width: min(900px, 85vw);
+    max-height: min(calc(100dvh - 120px), 856px);
+    overflow: auto;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 24px;
+    color: #0b1c30;
+    background: #fff;
+    font-family: "JetBrains Mono:Regular", monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: left;
+    white-space: pre-wrap;
+    word-break: break-word;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+.preview-status {
+    max-width: min(520px, 85vw);
+    padding: 20px 24px;
+    border-radius: 8px;
+    color: #eaf1ff;
+    background: rgba(11, 28, 48, 0.86);
+    font-family: "Geist:Medium", sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+}
+
 .viewer-closed {
     display: grid;
     width: 100%;

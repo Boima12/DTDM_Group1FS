@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     Archive,
     Download,
@@ -20,9 +20,6 @@ import api from '../../utils/axios.js';
 import { FileInspector } from "./previewModalParts.jsx";
 
 
-import BloompiercerImg from "./Bloompiercer.png";
-
-
 function Co_previewModal({
     file,
     visible,
@@ -33,11 +30,75 @@ function Co_previewModal({
     const [rotation, setRotation] = useState(0);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [isTrashed, setIsTrashed] = useState(false);
+    const [previewUrl, setPreviewUrl] = useState("");
+    const [textContent, setTextContent] = useState("");
+    const [previewLoading, setPreviewLoading] = useState(false);
+    const [previewError, setPreviewError] = useState("");
     const dragOrigin = useRef(null);
 
-    if (!visible || !file) return null;
-
     const getCategory = (targetFile) => targetFile.metadata?.category || "other";
+    const contentType = file?.metadata?.contentType?.toLowerCase() || "";
+    const extension = file?.metadata?.extension?.toLowerCase() || "";
+    const isTextPreview = contentType.startsWith("text/")
+        || ["json", "md"].includes(extension)
+        || contentType === "application/json";
+    const isImagePreview = contentType.startsWith("image/");
+    const isVideoPreview = contentType.startsWith("video/");
+    const isAudioPreview = contentType.startsWith("audio/");
+    const isPdfPreview = contentType === "application/pdf" || extension === "pdf";
+    const isPreviewable = file?.metadata?.previewable
+        && (isImagePreview || isVideoPreview || isAudioPreview || isPdfPreview || isTextPreview);
+
+    useEffect(() => {
+        let cancelled = false;
+        let objectUrl = "";
+
+        const loadPreview = async () => {
+            if (!visible || !file || !isPreviewable) {
+                setPreviewUrl("");
+                setTextContent("");
+                setPreviewError("");
+                setPreviewLoading(false);
+                return;
+            }
+
+            setPreviewLoading(true);
+            setPreviewError("");
+            setTextContent("");
+
+            try {
+                const response = await api.get(`/fsfiles/download/${file._id}`, {
+                    responseType: "blob",
+                });
+                const blob = new Blob([response.data], {
+                    type: response.headers["content-type"] || contentType,
+                });
+
+                if (isTextPreview) {
+                    const text = await blob.text();
+                    if (!cancelled) setTextContent(text);
+                } else {
+                    objectUrl = window.URL.createObjectURL(blob);
+                    if (!cancelled) setPreviewUrl(objectUrl);
+                }
+            } catch (error) {
+                if (!cancelled) {
+                    setPreviewError(error.response?.data?.msg || error.message);
+                }
+            } finally {
+                if (!cancelled) setPreviewLoading(false);
+            }
+        };
+
+        loadPreview();
+
+        return () => {
+            cancelled = true;
+            if (objectUrl) window.URL.revokeObjectURL(objectUrl);
+        };
+    }, [contentType, file, isPreviewable, isTextPreview, visible]);
+
+    if (!visible || !file) return null;
 
     const fileIcon = (targetFile, size = 20) => {
         const categoryIcons = {
@@ -264,12 +325,43 @@ function Co_previewModal({
                             transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom / 100}) rotate(${rotation}deg)`,
                         }}
                     >
-                        <img
-                            className={styles["preview-page"]}
-                            src={BloompiercerImg}
-                            alt="Trang 2 của tài liệu xem trước"
-                            draggable="false"
-                        />
+                        {previewLoading && <div className={styles["preview-status"]}>Đang tải bản xem trước...</div>}
+                        {!previewLoading && previewError && (
+                            <div className={styles["preview-status"]}>Không thể xem trước: {previewError}</div>
+                        )}
+                        {!previewLoading && !previewError && !isPreviewable && (
+                            <div className={styles["preview-status"]}>
+                                Định dạng tệp này không hỗ trợ xem trước.
+                            </div>
+                        )}
+                        {!previewLoading && !previewError && isImagePreview && previewUrl && (
+                            <img
+                                className={styles["preview-page"]}
+                                src={previewUrl}
+                                alt={file.metadata?.originalName || file.filename}
+                                draggable="false"
+                            />
+                        )}
+                        {!previewLoading && !previewError && isPdfPreview && previewUrl && (
+                            <iframe
+                                className={styles["document-preview"]}
+                                src={previewUrl}
+                                title={`Xem trước ${file.filename}`}
+                            />
+                        )}
+                        {!previewLoading && !previewError && isVideoPreview && previewUrl && (
+                            <video className={styles["media-preview"]} controls src={previewUrl}>
+                                Trình duyệt không hỗ trợ phát video này.
+                            </video>
+                        )}
+                        {!previewLoading && !previewError && isAudioPreview && previewUrl && (
+                            <audio className={styles["audio-preview"]} controls src={previewUrl}>
+                                Trình duyệt không hỗ trợ phát âm thanh này.
+                            </audio>
+                        )}
+                        {!previewLoading && !previewError && isTextPreview && (
+                            <pre className={styles["text-preview"]}>{textContent}</pre>
+                        )}
                     </div>
 
                     <div className={styles["helper-pill"]}>

@@ -24,6 +24,7 @@ function Co_mainContainer({ uploadVisible, onCloseUpload }) {
     const [renameModalVisible, setRenameModalVisible] = useState(false);
     const [renameModalFileId, setRenameModalFileId] = useState(null);
     const [fileDetailModalVisible, setFileDetailModalVisible] = useState(false);
+    const [previewModalVisible, setPreviewModalVisible] = useState(false);
     const [uploadProgress, setUploadProgress] = useState({
         visible: false,
         items: [],
@@ -45,6 +46,10 @@ function Co_mainContainer({ uploadVisible, onCloseUpload }) {
         setMoreMenuFileId(file._id);
         setMoreMenuVisible(true);
     };
+
+    const handleOpenPreviewModal = () => {
+        setPreviewModalVisible(true);
+    }
 
     const handleOpenRenameModal = (fileId) => {
         setRenameModalFileId(fileId);
@@ -95,15 +100,14 @@ function Co_mainContainer({ uploadVisible, onCloseUpload }) {
                 onClose={() => setMoreMenuVisible(false)}
                 onRename={handleOpenRenameModal}
                 onInfo={handleOpenFileDetailModal}
+                onPreview={handleOpenPreviewModal}
             />
 
-            <Co_fileDetailModal 
+            <Co_previewModal 
                 file={moreMenuFile}
-                visible={fileDetailModalVisible}
-                onClose={() => setFileDetailModalVisible(false)}
+                visible={previewModalVisible}
+                onClose={() => setPreviewModalVisible(false)}
             />
-
-            <Co_previewModal />
 
             <Co_renameModal 
                 visible={renameModalVisible}
@@ -113,6 +117,13 @@ function Co_mainContainer({ uploadVisible, onCloseUpload }) {
                 onRefresh={handleRequestMyDriveRefresh}
                 onNotification={showNotification}
             />
+
+            <Co_fileDetailModal 
+                file={moreMenuFile}
+                visible={fileDetailModalVisible}
+                onClose={() => setFileDetailModalVisible(false)}
+            />
+
             <Co_dragAndDropModal
                 visible={uploadVisible}
                 onClose={onCloseUpload}

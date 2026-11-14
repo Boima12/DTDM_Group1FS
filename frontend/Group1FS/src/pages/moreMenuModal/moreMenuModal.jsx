@@ -72,6 +72,11 @@ function Co_moreMenuModal({
         }
     };
 
+    const executePreview = () => {
+        onPreview?.();
+        onClose?.();
+    }
+
     // Use custom handler passed from parent, or fallback to internal handleDownload
     const executeDownload = (selectedFile) => {
         if (onDownload) {
@@ -92,7 +97,7 @@ function Co_moreMenuModal({
     }
 
     const menuOptions = [
-        { label: 'Xem trước', icon: Eye, action: onPreview },
+        { label: 'Xem trước', icon: Eye, action: executePreview },
         { label: 'Tải xuống', icon: Download, action: executeDownload },
         { label: 'Đổi tên', icon: Pencil, action: executeRename },
         { label: 'Thông tin tệp tin', icon: Info, action: executeInfo },

@@ -1,7 +1,12 @@
 import { useRef, useState } from "react";
 import {
+    Archive,
     Download,
+    FileAudio,
+    FileCode2,
+    FileImage,
     FileText,
+    FileVideo,
     Info,
     Maximize2,
     Mouse,
@@ -31,6 +36,20 @@ function Co_previewModal({
     const dragOrigin = useRef(null);
 
     if (!visible || !file) return null;
+
+    const getCategory = (targetFile) => targetFile.metadata?.category || "other";
+
+    const fileIcon = (targetFile, size = 20) => {
+        const categoryIcons = {
+            image: FileImage,
+            video: FileVideo,
+            audio: FileAudio,
+            document: FileText,
+            other: FileCode2,
+        };
+        const Icon = categoryIcons[getCategory(targetFile)] || Archive;
+        return <Icon size={size} />;
+    };
 
     const clampZoom = (value) => Math.min(180, Math.max(50, value));
 
@@ -130,23 +149,13 @@ function Co_previewModal({
         }
     };
 
-    // if (!viewerOpen) {
-    //     return (
-    //         <main className={styles["viewer-closed"]}>
-    //             <button type="button" onClick={() => setViewerOpen(true)}>
-    //                 Mở lại trình xem tệp
-    //             </button>
-    //         </main>
-    //     );
-    // }
-
     return (
         <main className={styles["viewer-shell"]}>
             <section className={styles["preview-pane"]} aria-label="Xem trước tệp">
                 <header className={styles.topbar}>
                     <div className={styles["file-identity"]}>
                         <span className={styles["pdf-icon"]}>
-                            <FileText className={styles["icon-asset"]} size={18} />
+                            {fileIcon(file, 18)}
                         </span>
                         <div className={styles["file-identity-copy"]}>
                             <h1>{file.filename}</h1>

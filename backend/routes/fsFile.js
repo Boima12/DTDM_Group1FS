@@ -6,7 +6,7 @@ const checkFileSize = require('../middleware/upload/upload_check.js');
 const { uploadFile, uploadMultipleFiles } = require('../controllers/fsFile/uploads.js');
 const { getFilesInfo, getSpecificFileInfo, getAllValidFiles, getAllTrashFiles } = require('../controllers/fsFile/lists.js');
 const { downloadFile, downloadSelectedFiles } = require('../controllers/fsFile/downloads.js');
-const { renameFile, deleteFile, markFilesAsTrash } = require('../controllers/fsFile/updates.js');
+const { renameFile, deleteFile, markFilesAsTrash, restoreFiles, deleteFiles } = require('../controllers/fsFile/updates.js');
 
 
 // UPLOAD
@@ -26,6 +26,8 @@ router.post('/download/selected', downloadSelectedFiles);
 // UPDATE
 router.put('/update/rename/:id', renameFile);
 router.put('/update/markFilesAsTrash/:ids', markFilesAsTrash);
+router.put('/update/restore/:ids', restoreFiles);
+router.delete('/update/deleteMultiple/:ids', deleteFiles);
 router.delete('/update/delete/:id', deleteFile);
 
 

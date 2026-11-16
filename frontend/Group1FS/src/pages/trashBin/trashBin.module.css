@@ -61,6 +61,7 @@
 
 .search input {
     flex: 1;
+    font-size: 13px !important;
     min-width: 0;
     border: 0;
     outline: 0;

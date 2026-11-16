@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
     Archive,
     Check,
@@ -32,6 +32,8 @@ function Co_myDrive({
     const [category, setCategory] = useState('all');
     const [selected, setSelected] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [query, setQuery] = useState('');
+    const searchInput = useRef(null);
 
     const handleListAllFiles = async () => {
         setLoading(true);
@@ -68,9 +70,26 @@ function Co_myDrive({
     };
 
     const getCategory = (file) => file.metadata?.category || 'other';
-    const filteredFiles = category === 'all'
-        ? files
-        : files.filter((file) => getCategory(file) === category);
+    const normalizedQuery = query.trim().toLowerCase();
+    const matchesQuery = (file) => {
+        if (!normalizedQuery) return true;
+
+        const searchableValues = [
+            file.filename,
+            file.metadata?.originalName,
+            file.metadata?.contentType,
+            file.metadata?.extension,
+            file.metadata?.category,
+            file.metadata?.description,
+        ];
+
+        return searchableValues.some((value) =>
+            String(value || '').toLowerCase().includes(normalizedQuery)
+        );
+    };
+    const filteredFiles = files
+        .filter((file) => category === 'all' || getCategory(file) === category)
+        .filter(matchesQuery);
     const categories = [
         { id: 'all', label: 'Tất cả', icon: Grid2X2 },
         { id: 'document', label: 'Tài liệu', icon: FileText },
@@ -79,6 +98,21 @@ function Co_myDrive({
         { id: 'audio', label: 'Âm thanh', icon: FileAudio },
         { id: 'other', label: 'Khác', icon: FileCode2 },
     ];
+
+    useEffect(() => {
+        const focusSearch = (event) => {
+            if (
+                event.key === '/' &&
+                document.activeElement !== searchInput.current
+            ) {
+                event.preventDefault();
+                searchInput.current?.focus();
+            }
+        };
+
+        window.addEventListener('keydown', focusSearch);
+        return () => window.removeEventListener('keydown', focusSearch);
+    }, []);
 
     const toggleSelected = (id) => {
         setSelected((current) => current.includes(id)
@@ -182,7 +216,14 @@ const handleMarkDeleteSelected = async () => {
                 <span className={styles.status}><Cloud size={14} /> Render Connected</span>
                 <label className={styles.search}>
                     <Search size={16} />
-                    <input type="search" placeholder="Tìm kiếm tệp, thư mục, định dạng..." />
+                    <input
+                        ref={searchInput}
+                        type="search"
+                        value={query}
+                        onChange={(event) => setQuery(event.target.value)}
+                        placeholder="Tìm kiếm tệp, thư mục, định dạng..."
+                        aria-label="Tìm kiếm tệp"
+                    />
                     <kbd>/</kbd>
                 </label>
                 <button className={styles.iconButton} type="button" onClick={handleRefresh} title="Làm mới" aria-label="Làm mới danh sách">
@@ -236,7 +277,13 @@ const handleMarkDeleteSelected = async () => {
 
                 {error && <div className={styles.error}>{error}</div>}
                 {loading && files.length === 0 && <div className={styles.empty}>Đang tải tệp...</div>}
-                {!loading && filteredFiles.length === 0 && <div className={styles.empty}>Chưa có tệp nào.</div>}
+                {!loading && filteredFiles.length === 0 && (
+                    <div className={styles.empty}>
+                        {normalizedQuery
+                            ? `Không tìm thấy tệp phù hợp với "${query}".`
+                            : 'Chưa có tệp nào.'}
+                    </div>
+                )}
 
                 {view === 'list' && filteredFiles.length > 0 && (
                     <div className={styles.tableWrap}>

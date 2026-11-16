@@ -28,6 +28,7 @@ function Co_trashBin({
     const [category] = useState('all');
     const [selected, setSelected] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [actionLoading, setActionLoading] = useState(false);
     
     const [query, setQuery] = useState("");
     const searchInput = useRef(null);
@@ -60,12 +61,26 @@ function Co_trashBin({
     };
 
     const getCategory = (file) => file.metadata?.category || 'other';
+    const normalizedQuery = query.trim().toLowerCase();
     const filteredFiles = (category === 'all'
         ? files
         : files.filter((file) => getCategory(file) === category)
-    ).filter((file) =>
-        !query.trim() || file.filename?.toLowerCase().includes(query.trim().toLowerCase())
-    );
+    ).filter((file) => {
+        if (!normalizedQuery) return true;
+
+        const searchableValues = [
+            file.filename,
+            file.metadata?.originalName,
+            file.metadata?.contentType,
+            file.metadata?.extension,
+            file.metadata?.category,
+            file.metadata?.description,
+        ];
+
+        return searchableValues.some((value) =>
+            String(value || '').toLowerCase().includes(normalizedQuery)
+        );
+    });
 
     const fileIcon = (file, size = 18) => {
         const categoryIcons = {
@@ -143,22 +158,37 @@ function Co_trashBin({
         return formatSize(totalTemporarySize);
     }
 
-    const restoreFiles = (ids) => {
+    const restoreFiles = async (ids) => {
         if (!ids.length) return;
-        setFiles((current) =>
-            current.filter((file) => !ids.includes(file._id)),
-        );
-        setSelected((current) => current.filter((id) => !ids.includes(id)));
-        onNotification?.(`${ids.length} file${ids.length > 1 ? "s" : ""} restored`);
+        try {
+            setActionLoading(true);
+            const response = await api.put(`/fsfiles/update/restore/${ids.join(',')}`);
+            setFiles((current) => current.filter((file) => !ids.includes(file._id)));
+            setSelected((current) => current.filter((id) => !ids.includes(id)));
+            onNotification?.(response.data.msg || `${ids.length} file${ids.length > 1 ? "s" : ""} restored`);
+        } catch (err) {
+            setError(`Restore failed: ${err.response?.data?.msg || err.message}`);
+        } finally {
+            setActionLoading(false);
+        }
     };
 
-    const deleteFiles = (ids) => {
+    const deleteFiles = async (ids) => {
         if (!ids.length) return;
-        setFiles((current) =>
-            current.filter((file) => !ids.includes(file._id)),
-        );
-        setSelected((current) => current.filter((id) => !ids.includes(id)));
-        onNotification?.(`${ids.length} file${ids.length > 1 ? "s" : ""} permanently deleted`);
+        try {
+            setActionLoading(true);
+            const endpoint = ids.length === 1
+                ? `/fsfiles/update/delete/${ids[0]}`
+                : `/fsfiles/update/deleteMultiple/${ids.join(',')}`;
+            const response = await api.delete(endpoint);
+            setFiles((current) => current.filter((file) => !ids.includes(file._id)));
+            setSelected((current) => current.filter((id) => !ids.includes(id)));
+            onNotification?.(response.data.msg || `${ids.length} file${ids.length > 1 ? "s" : ""} permanently deleted`);
+        } catch (err) {
+            setError(`Delete failed: ${err.response?.data?.msg || err.message}`);
+        } finally {
+            setActionLoading(false);
+        }
     };
 
     const copyDocumentId = async (id) => {
@@ -169,16 +199,6 @@ function Co_trashBin({
             onNotification?.(`Document ID: ${id}`);
         }
     };
-
-    // const handleUpload = (event) => {
-    //     const uploadedFiles = Array.from(event.target.files || []);
-    //     if (uploadedFiles.length) {
-    //         onNotification?.(
-    //             `${uploadedFiles.length} file${uploadedFiles.length > 1 ? "s" : ""} selected`,
-    //         );
-    //     }
-    //     event.target.value = "";
-    // };
 
     return (
         <div className={styles.appShell}>
@@ -231,7 +251,7 @@ function Co_trashBin({
                         <button
                             className={styles.restoreSelected}
                             type="button"
-                            disabled={!selected.length}
+                            disabled={!selected.length || actionLoading}
                             onClick={() => restoreFiles(selected)}
                         >
                             <RotateCcw size={14} />
@@ -240,7 +260,7 @@ function Co_trashBin({
                         <button
                             className={styles.deleteSelected}
                             type="button"
-                            disabled={!selected.length}
+                            disabled={!selected.length || actionLoading}
                             onClick={() => deleteFiles(selected)}
                         >
                             <Trash2 size={14} />
@@ -321,6 +341,7 @@ function Co_trashBin({
                                             onClick={() =>
                                                 restoreFiles([file._id])
                                             }
+                                            disabled={actionLoading}
                                         >
                                             <RotateCcw size={12} />
                                             Restore
@@ -330,6 +351,7 @@ function Co_trashBin({
                                             onClick={() =>
                                                 deleteFiles([file._id])
                                             }
+                                            disabled={actionLoading}
                                         >
                                             <Trash2 size={12} />
                                             Permanently delete

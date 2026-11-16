@@ -13,7 +13,12 @@ import Co_confirmDeleteModal from './trashBin/confirmDeleteModal.jsx';
 import Co_confirmDeleteSelectedModal from './trashBin/confirmDeleteSelectedModal.jsx';
 import Co_notificationPopup from './notificationPopup/notificationPopup.jsx';
 
-function Co_mainContainer({ uploadVisible, onCloseUpload }) {
+function Co_mainContainer({ 
+    uploadVisible, 
+    onCloseUpload, 
+    activeMainContainer,
+}) {
+
     const [activeMessage, setActiveMessage] = useState("");
     const [messageKey, setMessageKey] = useState(0);
 
@@ -101,12 +106,15 @@ function Co_mainContainer({ uploadVisible, onCloseUpload }) {
                 onRename={handleOpenRenameModal}
                 onInfo={handleOpenFileDetailModal}
                 onPreview={handleOpenPreviewModal}
+                onRefresh={handleRequestMyDriveRefresh}
+                onNotification={showNotification}
             />
 
             <Co_previewModal 
                 file={moreMenuFile}
                 visible={previewModalVisible}
                 onClose={() => setPreviewModalVisible(false)}
+                onNotification={showNotification}
             />
 
             <Co_renameModal 
@@ -144,14 +152,20 @@ function Co_mainContainer({ uploadVisible, onCloseUpload }) {
             <Co_confirmDeleteSelectedModal />
 
             {/* main content, only 1 can be displayed at a time */}
-            <Co_myDrive 
-                onRequestRefresh={requestMyDriveRefresh}
-                onRefresh={handleRequestMyDriveRefresh}
-                onOpenMoreMenu={handleOpenMoreMenu} 
-                onNotification={showNotification}
-            />
+            {activeMainContainer === "myDrive" && (
+                <Co_myDrive 
+                    onRequestRefresh={requestMyDriveRefresh}
+                    onRefresh={handleRequestMyDriveRefresh}
+                    onOpenMoreMenu={handleOpenMoreMenu} 
+                    onNotification={showNotification}
+                />
+            )}
+
+            {activeMainContainer === "trashBin" && (
+                <Co_trashBin />
+            )}
+
             <Co_searchNormal />
-            <Co_trashBin />
             <Co_searchTrashBin />
         </main>
     );

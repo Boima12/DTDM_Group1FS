@@ -17,9 +17,10 @@ function Co_moreMenuModal({
     onClose, 
     onDownload, 
     onRename, 
-    onDelete, 
     onInfo, 
     onPreview,
+    onRefresh,
+    onNotification,
 }) {
     const activeFileId = file?._id || fileId;
 
@@ -96,12 +97,30 @@ function Co_moreMenuModal({
         onClose?.();
     }
 
+    const executeDelete = async () => {
+        const targetId = String(activeFileId || '').trim();
+        if (!targetId) return;
+
+        try {
+            await api.put(`/fsfiles/update/markFilesAsTrash/${targetId}`, {
+                ids: [targetId],
+            });
+
+            onRefresh?.(true);
+            onNotification?.(`Đã chuyển vào thùng rác tệp tin ID: ${targetId}`);
+        } catch (err) {
+            onNotification?.(`Mark as delete failed: ${err.response?.data?.msg || err.message}`);
+        } finally {
+            onClose?.();
+        }
+    };
+
     const menuOptions = [
         { label: 'Xem trước', icon: Eye, action: executePreview },
         { label: 'Tải xuống', icon: Download, action: executeDownload },
         { label: 'Đổi tên', icon: Pencil, action: executeRename },
         { label: 'Thông tin tệp tin', icon: Info, action: executeInfo },
-        { label: 'Chuyển vào thùng rác', icon: Trash2, action: onDelete, destructive: true },
+        { label: 'Chuyển vào thùng rác', icon: Trash2, action: executeDelete, destructive: true },
     ];
 
     return createPortal(

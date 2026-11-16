@@ -57,7 +57,32 @@ const renameFile = async (req, res) => {
     }
 };
 
-// 2. DELETE FILE BY ID
+
+// 2. MARK FILES AS TRASH (markAsTrash: true) BY ID
+const markFilesAsTrash = async (req, res) => {
+    try {
+        const { ids } = req.body;
+        const _ids = ids.map(id => mongoose.Types.ObjectId.createFromHexString(id));
+        const bucket = getGridBucket();
+
+        await bucket.s._filesCollection.updateMany(
+            { _id: { $in: _ids } },
+            {
+                $set: {
+                    'metadata.markAsTrash': true,
+                    'metadata.markAsTrashDate': new Date(),
+                },
+            }
+        );
+
+        res.status(StatusCodes.OK).json({ msg: "Files marked as trash successfully" });
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: err.message });
+    }
+};
+
+
+// 3. DELETE FILE BY ID
 const deleteFile = async (req, res) => {
     try {
         const { id } = req.params;
@@ -76,5 +101,6 @@ const deleteFile = async (req, res) => {
 
 module.exports = {
     renameFile,
-    deleteFile
+    deleteFile,
+    markFilesAsTrash
 };

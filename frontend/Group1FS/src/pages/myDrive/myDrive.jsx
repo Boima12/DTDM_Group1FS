@@ -36,7 +36,7 @@ function Co_myDrive({
     const handleListAllFiles = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/fsfiles/list/allFiles');
+            const res = await api.get('/fsfiles/list/allValidFiles');
             setFiles(Array.isArray(res.data.files) ? res.data.files : []);
             setError('');
         } catch (err) {
@@ -156,6 +156,26 @@ function Co_myDrive({
         }
     };
 
+const handleMarkDeleteSelected = async () => {
+        if (selected.length === 0) return;
+
+        try {
+            setLoading(true);
+
+            await api.put(`/fsfiles/update/markFilesAsTrash/${selected.join(',')}`, {
+                ids: selected,
+            });
+
+            setSelected([]);
+            handleListAllFiles();
+            onNotification?.('Selected files moved to trash successfully.');
+        } catch (err) {
+            setError(`Delete failed: ${err.response?.data?.msg || err.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className={styles.page}>
             <header className={styles.topbar}>
@@ -206,9 +226,10 @@ function Co_myDrive({
                             <Upload size={14} /> Tải mục đã chọn
                         </button>
                         <button type="button"
+                            onClick={handleMarkDeleteSelected}
                             disabled={selected.length === 0}
                         >
-                            <X size={14} /> Xóa mục đã chọn
+                            <X size={14} /> Mark delete all selected
                         </button>
                     </div>
                 </div>

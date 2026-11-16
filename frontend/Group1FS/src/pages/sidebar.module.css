@@ -73,12 +73,17 @@
     color: #334155;
     font-size: 13px;
     text-decoration: none;
+    transition: all 0.4s ease;
 }
 
-.navItem:hover,
-.navItem.active {
+.navItem_myDrive:hover, .navItem_myDrive.active {
     color: #006c51;
     background: #b6f5dc;
+}
+
+.navItem_trashBin:hover, .navItem_trashBin.active {
+    color: white;
+    background: rgb(230, 78, 78);
 }
 
 .count {

@@ -1,3 +1,44 @@
+const path = require('path');
+
+const MIME_MAP = {
+    // Images
+    png: 'image/png',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    gif: 'image/gif',
+    webp: 'image/webp',
+    svg: 'image/svg+xml',
+    // Videos
+    mp4: 'video/mp4',
+    webm: 'video/webm',
+    mkv: 'video/x-matroska',
+    mov: 'video/quicktime',
+    avi: 'video/x-msvideo',
+    // Audio
+    mp3: 'audio/mpeg',
+    wav: 'audio/wav',
+    ogg: 'audio/ogg',
+    m4a: 'audio/mp4',
+    // Documents
+    pdf: 'application/pdf',
+    doc: 'application/msword',
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xls: 'application/vnd.ms-excel',
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ppt: 'application/vnd.ms-powerpoint',
+    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    txt: 'text/plain',
+    csv: 'text/csv',
+    json: 'application/json',
+    // Archives
+    zip: 'application/zip',
+    rar: 'application/vnd.rar',
+    '7z': 'application/x-7z-compressed',
+    tar: 'application/x-tar',
+    gz: 'application/gzip',
+};
+
+
 /**
  * Categorize file and check previewability based on MIME type and extension
  * @param {Object} file - req.file object from Multer
@@ -63,4 +104,50 @@ const getFileMetadata = (file) => {
     };
 };
 
-module.exports = { getFileMetadata };
+
+const getMetadataFromFilename = (filename, fallbackContentType = 'application/octet-stream') => {
+    const ext = path.extname(filename).replace('.', '').toLowerCase();
+    const contentType = MIME_MAP[ext] || fallbackContentType;
+
+    let category = 'other';
+    let previewable = false;
+
+    const previewableVideoTypes = ['mp4', 'webm', 'ogg', 'mov'];
+    const previewableAudioTypes = ['mp3', 'wav', 'ogg', 'aac', 'm4a'];
+
+    if (contentType.startsWith('image/')) {
+        category = 'image';
+        previewable = true;
+    } else if (contentType.startsWith('video/')) {
+        category = 'video';
+        previewable = previewableVideoTypes.includes(ext) || contentType.includes('mp4') || contentType.includes('webm');
+    } else if (contentType.startsWith('audio/')) {
+        category = 'audio';
+        previewable = previewableAudioTypes.includes(ext) || contentType.includes('mpeg') || contentType.includes('wav');
+    } else if (
+        contentType === 'application/pdf' ||
+        contentType.startsWith('text/') ||
+        contentType.includes('document') ||
+        contentType.includes('sheet') ||
+        contentType.includes('presentation') ||
+        contentType.includes('msword') ||
+        contentType.includes('ms-excel') ||
+        contentType.includes('ms-powerpoint')
+    ) {
+        category = 'document';
+        previewable = contentType === 'application/pdf' || contentType.startsWith('text/');
+    }
+
+    return {
+        extension: ext,
+        contentType,
+        category,
+        previewable,
+    };
+};
+
+
+module.exports = { 
+    getFileMetadata, 
+    getMetadataFromFilename 
+};

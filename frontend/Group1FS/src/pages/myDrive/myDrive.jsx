@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
     Archive,
     Check,
@@ -20,18 +20,25 @@ import {
 import api from '../../utils/axios.js';
 import styles from './myDrive.module.css';
 
-function Co_myDrive({ onOpenMoreMenu }) {
+function Co_myDrive({ 
+    onRequestRefresh,
+    onRefresh,
+    onOpenMoreMenu,
+    onNotification,
+}) {
     const [files, setFiles] = useState([]);
     const [error, setError] = useState('');
     const [view, setView] = useState('list');
     const [category, setCategory] = useState('all');
     const [selected, setSelected] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [query, setQuery] = useState('');
+    const searchInput = useRef(null);
 
     const handleListAllFiles = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/fsfiles/list/allFiles');
+            const res = await api.get('/fsfiles/list/allValidFiles');
             setFiles(Array.isArray(res.data.files) ? res.data.files : []);
             setError('');
         } catch (err) {
@@ -45,10 +52,44 @@ function Co_myDrive({ onOpenMoreMenu }) {
         handleListAllFiles();
     }, []);
 
+    useEffect(() => {
+        if (onRequestRefresh) {
+            handleListAllFiles();
+            onRefresh(false);
+        }
+    }, [onRequestRefresh, onRefresh]);
+
+    const handleRefresh = () => {
+        try {
+            handleListAllFiles();
+        } catch (err) {
+            onNotification?.(`Error refreshing files: ${err.response?.data?.msg || err.message}`);
+        } finally {
+            onNotification?.('Refresh completed');
+        }
+    };
+
     const getCategory = (file) => file.metadata?.category || 'other';
-    const filteredFiles = category === 'all'
-        ? files
-        : files.filter((file) => getCategory(file) === category);
+    const normalizedQuery = query.trim().toLowerCase();
+    const matchesQuery = (file) => {
+        if (!normalizedQuery) return true;
+
+        const searchableValues = [
+            file.filename,
+            file.metadata?.originalName,
+            file.metadata?.contentType,
+            file.metadata?.extension,
+            file.metadata?.category,
+            file.metadata?.description,
+        ];
+
+        return searchableValues.some((value) =>
+            String(value || '').toLowerCase().includes(normalizedQuery)
+        );
+    };
+    const filteredFiles = files
+        .filter((file) => category === 'all' || getCategory(file) === category)
+        .filter(matchesQuery);
     const categories = [
         { id: 'all', label: 'Tất cả', icon: Grid2X2 },
         { id: 'document', label: 'Tài liệu', icon: FileText },
@@ -57,6 +98,21 @@ function Co_myDrive({ onOpenMoreMenu }) {
         { id: 'audio', label: 'Âm thanh', icon: FileAudio },
         { id: 'other', label: 'Khác', icon: FileCode2 },
     ];
+
+    useEffect(() => {
+        const focusSearch = (event) => {
+            if (
+                event.key === '/' &&
+                document.activeElement !== searchInput.current
+            ) {
+                event.preventDefault();
+                searchInput.current?.focus();
+            }
+        };
+
+        window.addEventListener('keydown', focusSearch);
+        return () => window.removeEventListener('keydown', focusSearch);
+    }, []);
 
     const toggleSelected = (id) => {
         setSelected((current) => current.includes(id)
@@ -134,16 +190,43 @@ function Co_myDrive({ onOpenMoreMenu }) {
         }
     };
 
+const handleMarkDeleteSelected = async () => {
+        if (selected.length === 0) return;
+
+        try {
+            setLoading(true);
+
+            await api.put(`/fsfiles/update/markFilesAsTrash/${selected.join(',')}`, {
+                ids: selected,
+            });
+
+            setSelected([]);
+            handleListAllFiles();
+            onNotification?.('Selected files moved to trash successfully.');
+        } catch (err) {
+            setError(`Delete failed: ${err.response?.data?.msg || err.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className={styles.page}>
             <header className={styles.topbar}>
                 <span className={styles.status}><Cloud size={14} /> Render Connected</span>
                 <label className={styles.search}>
                     <Search size={16} />
-                    <input type="search" placeholder="Tìm kiếm tệp, thư mục, định dạng..." />
+                    <input
+                        ref={searchInput}
+                        type="search"
+                        value={query}
+                        onChange={(event) => setQuery(event.target.value)}
+                        placeholder="Tìm kiếm tệp, thư mục, định dạng..."
+                        aria-label="Tìm kiếm tệp"
+                    />
                     <kbd>/</kbd>
                 </label>
-                <button className={styles.iconButton} type="button" onClick={handleListAllFiles} title="Làm mới" aria-label="Làm mới danh sách">
+                <button className={styles.iconButton} type="button" onClick={handleRefresh} title="Làm mới" aria-label="Làm mới danh sách">
                     <RefreshCw size={18} className={loading ? styles.spinning : ''} />
                 </button>
                 <button className={styles.profile} type="button" aria-label="Tài khoản">T</button>
@@ -184,16 +267,23 @@ function Co_myDrive({ onOpenMoreMenu }) {
                             <Upload size={14} /> Tải mục đã chọn
                         </button>
                         <button type="button"
+                            onClick={handleMarkDeleteSelected}
                             disabled={selected.length === 0}
                         >
-                            <X size={14} /> Xóa mục đã chọn
+                            <X size={14} /> Mark delete all selected
                         </button>
                     </div>
                 </div>
 
                 {error && <div className={styles.error}>{error}</div>}
                 {loading && files.length === 0 && <div className={styles.empty}>Đang tải tệp...</div>}
-                {!loading && filteredFiles.length === 0 && <div className={styles.empty}>Chưa có tệp nào.</div>}
+                {!loading && filteredFiles.length === 0 && (
+                    <div className={styles.empty}>
+                        {normalizedQuery
+                            ? `Không tìm thấy tệp phù hợp với "${query}".`
+                            : 'Chưa có tệp nào.'}
+                    </div>
+                )}
 
                 {view === 'list' && filteredFiles.length > 0 && (
                     <div className={styles.tableWrap}>
@@ -206,14 +296,14 @@ function Co_myDrive({ onOpenMoreMenu }) {
                                 <button className={styles.checkbox} type="button" onClick={() => toggleSelected(file._id)} aria-label={`Chọn ${file.filename}`}>
                                     {selected.includes(file._id) && <Check size={14} />}
                                 </button>
-                                <span className={styles.fileName}><span className={styles.fileIcon}>{fileIcon(file)}</span><span><strong>{file.metadata?.originalName || file.filename}</strong><small>{file.metadata?.contentType || 'application/octet-stream'}</small></span></span>
+                                <span className={styles.fileName}><span className={styles.fileIcon}>{fileIcon(file)}</span><span><strong>{file?.filename || file.metadata.originalName}</strong><small>{file.metadata?.contentType || 'application/octet-stream'}</small></span></span>
                                 <span>{formatSize(file.length)}</span><span>{formatDate(file.uploadDate)}</span><span className={styles.documentId}>{file._id}</span>
                                 <div className={styles.moreWrapper}>
                                     <button
                                         className={styles.moreButton}
                                         type="button"
                                         aria-label={`Tùy chọn ${file.filename}`}
-                                        onClick={() => onOpenMoreMenu(file._id)}
+                                        onClick={() => onOpenMoreMenu(file)}
                                     >
                                         <MoreVertical size={18} />
                                     </button>
@@ -235,7 +325,7 @@ function Co_myDrive({ onOpenMoreMenu }) {
                                             className={styles.cardMenu}
                                             type="button"
                                             aria-label={`Tùy chọn ${file.filename}`}
-                                            onClick={() => onOpenMoreMenu(file._id)}
+                                            onClick={() => onOpenMoreMenu(file)}
                                         >
                                             <MoreVertical size={18} />
                                         </button>
@@ -244,7 +334,7 @@ function Co_myDrive({ onOpenMoreMenu }) {
                                         <button className={styles.cardSelect} type="button" onClick={() => toggleSelected(file._id)} aria-label={`Chọn ${file.filename}`}>
                                             {selected.includes(file._id) ? <Check size={14} /> : null}
                                         </button>
-                                        <strong>{file.metadata?.originalName || file.filename}</strong>
+                                        <strong>{file?.filename || file.metadata.originalName}</strong>
                                         <small>{formatSize(file.length)} · {formatDate(file.uploadDate)}</small>
                                     </div>
                                 </article>

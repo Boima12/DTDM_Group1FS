@@ -4,9 +4,14 @@
     src: url('./Inter/Inter-VariableFont.ttf');
 }
 
-
 @font-face {
     font-family: 'Geist';
 
     src: url('./Geist/Geist-VariableFont_wght.ttf');
+}
+
+@font-face {
+    font-family: 'JetBrains Mono';
+
+    src: url('./JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf');
 }

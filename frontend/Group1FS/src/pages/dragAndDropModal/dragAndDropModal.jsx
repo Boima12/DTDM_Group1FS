@@ -36,6 +36,8 @@ function Co_dragAndDropModal({
     onUploadStart,
     onUploadProgress,
     onUploadComplete,
+    onNotification,
+    onRefresh,
 }) {
     const [files, setFiles] = useState([]);
     const [isDragging, setIsDragging] = useState(false);
@@ -109,6 +111,8 @@ function Co_dragAndDropModal({
             setError(`Tải lên thất bại: ${err.response?.data?.msg || err.message}`);
         } finally {
             setUploading(false);
+            onRefresh();
+            onNotification(`Tải lên ${files.length} tệp hoàn tất`);
         }
     };
 

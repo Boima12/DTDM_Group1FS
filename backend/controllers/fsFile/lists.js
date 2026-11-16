@@ -63,7 +63,33 @@ const getSpecificFileInfo = async (req, res) => {
 };
 
 
+// 3. GET LIST OF ALL markAsTrash: False FILES METADATA
+const getAllValidFiles = async (req, res) => {
+    try {
+        const bucket = getGridBucket();
+        const files = await bucket.find({ "metadata.markAsTrash": false }).toArray();
+        res.status(StatusCodes.OK).json({ files });
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: err.message });
+    }
+};
+
+
+// 4. GET LIST OF ALL markAsTrash: True FILES METADATA
+const getAllTrashFiles = async (req, res) => {
+    try {
+        const bucket = getGridBucket();
+        const files = await bucket.find({ "metadata.markAsTrash": true }).toArray();
+        res.status(StatusCodes.OK).json({ files });
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: err.message });
+    }
+};
+
+
 module.exports = {
     getFilesInfo,
-    getSpecificFileInfo
+    getSpecificFileInfo,
+    getAllValidFiles,
+    getAllTrashFiles
 };

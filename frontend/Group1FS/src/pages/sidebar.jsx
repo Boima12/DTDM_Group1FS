@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     Cloud,
     FilePlus2,
@@ -7,16 +8,33 @@ import {
 } from 'lucide-react';
 import styles from './sidebar.module.css';
 
-function Co_sidebar({ onUploadClick }) {
+function Co_sidebar({ 
+    onUploadClick,
+    onMainContainerChange,
+}) {
+    const [activeTab, setActiveTab] = useState("myDrive");
 
-    return(
+    const switchToMyDrive = (e) => {
+        e.preventDefault();
+        setActiveTab("myDrive");
+        onMainContainerChange("myDrive");
+    };
+
+    const switchToTrashBin = (e) => {
+        e.preventDefault();
+        setActiveTab("trashBin");
+        onMainContainerChange("trashBin");
+    };
+
+    return (
         <aside className={styles.sidebar}>
             <div className={styles.brand}>
                 <span className={styles.brandIcon}><Cloud size={20} /></span>
                 <span>Group1FS</span>
             </div>
 
-            <button type="button" 
+            <button 
+                type="button" 
                 className={styles.uploadButton}
                 onClick={onUploadClick}
             >
@@ -25,15 +43,23 @@ function Co_sidebar({ onUploadClick }) {
             </button>
 
             <nav className={styles.navigation} aria-label="Điều hướng chính">
-                <a className={`${styles.navItem} ${styles.active}`} href="#my-drive">
+                <a 
+                    className={`${styles.navItem} ${styles.navItem_myDrive} ${activeTab === "myDrive" ? styles.active : ""}`} 
+                    href="#my-drive"
+                    onClick={switchToMyDrive}
+                >
                     <Folder size={18} />
                     <span>My Drive</span>
-                    <span className={styles.count}>24</span>
+                    {/* <span className={styles.count}>24</span> */}
                 </a>
-                <a className={styles.navItem} href="#trash">
+                <a 
+                    className={`${styles.navItem} ${styles.navItem_trashBin} ${activeTab === "trashBin" ? styles.active : ""}`} 
+                    href="#trashBin"
+                    onClick={switchToTrashBin}
+                >
                     <Trash2 size={18} />
                     <span>Thùng rác</span>
-                    <span className={`${styles.count} ${styles.trashCount}`}>3</span>
+                    {/* <span className={`${styles.count} ${styles.trashCount}`}>3</span> */}
                 </a>
             </nav>
 
@@ -54,4 +80,4 @@ function Co_sidebar({ onUploadClick }) {
     );
 }
 
-export default Co_sidebar
+export default Co_sidebar;

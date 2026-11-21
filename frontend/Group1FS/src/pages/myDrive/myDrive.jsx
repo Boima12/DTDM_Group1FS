@@ -257,7 +257,7 @@ const handleMarkDeleteSelected = async () => {
                 </div>
 
                 <div className={styles.toolbar}>
-                    <span>Sort by: <strong>Relevant</strong> <ChevronDown size={14} /></span>
+                    {/* <span>Sort by: <strong>Relevant</strong> <ChevronDown size={14} /></span> */}
                     <span>Selected: <strong>{selected.length}</strong> / {files.length}</span>
                     <div className={styles.toolbarActions}>
                         <button type="button"

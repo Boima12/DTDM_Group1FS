@@ -378,6 +378,8 @@ function Co_trashBin({
                                                     setDeleteTarget({
                                                         ids: [file._id],
                                                         fileName: file.filename,
+                                                        fileSize: formatSize(file.length),
+                                                        fileId: file._id,
                                                     })
                                                 }
                                                 disabled={actionLoading}
@@ -425,6 +427,8 @@ function Co_trashBin({
             <Co_confirmDeleteModal
                 visible={Boolean(deleteTarget && !deleteTarget.bulk)}
                 fileName={deleteTarget?.fileName}
+                fileSize={deleteTarget?.fileSize}
+                fileId={deleteTarget?.fileId}
                 loading={actionLoading}
                 onClose={() => !actionLoading && setDeleteTarget(null)}
                 onConfirm={async () => {

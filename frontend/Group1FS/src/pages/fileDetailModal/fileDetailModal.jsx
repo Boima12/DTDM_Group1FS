@@ -120,7 +120,7 @@ function Co_fileDetailModal({
                         <span className={styles.infoIcon}>
                             <Info size={18} />
                         </span>
-                        <h2 id="file-detail-title">Thông tin tệp tin</h2>
+                        <h2 id="file-detail-title">File details</h2>
                     </div>
                     <button
                         className={styles.closeIconButton}
@@ -144,25 +144,25 @@ function Co_fileDetailModal({
                     </div>
 
                     <div className={styles.information}>
-                        <h3>THÔNG TIN TỆP TIN</h3>
+                        <h3>FILE DETAILS</h3>
                         <div className={styles.detailCard}>
                             <DetailRow
-                                label="Tên tệp gốc"
+                                label="Original name"
                                 value={file.filename}
                                 alternate
                                 copyable
                             />
                             <DetailRow
-                                label="Định dạng (MIME Type)"
+                                label="MIME Type"
                                 value={file.metadata?.contentType || "application/octet-stream"}
                             />
                             <DetailRow
-                                label="Kích thước lưu trữ"
+                                label="File storage size"
                                 value={formatFileSize2(file.length)}
                                 alternate
                             />
                             <DetailRow
-                                label="Thời gian tải lên"
+                                label="Upload timestamp"
                                 value={formatUploadDate(file.uploadDate)}
                             />
                             <DetailRow
@@ -174,7 +174,7 @@ function Co_fileDetailModal({
                             />
 
                             <div className={styles.locationBlock}>
-                                <h4>Tọa độ lưu trữ vật lý</h4>
+                                <h4>Physical storage coordinates</h4>
                                 <dl>
                                     <div>
                                         <dt>Bucket:</dt>
@@ -202,7 +202,7 @@ function Co_fileDetailModal({
                         type="button"
                         onClick={onClose}
                     >
-                        Đóng
+                        Close
                     </button>
                 </footer>
             </section>

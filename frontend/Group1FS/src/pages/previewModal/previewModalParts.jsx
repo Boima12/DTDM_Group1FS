@@ -123,7 +123,7 @@ export function FileInspector({
                     <span className={styles["inspector-title-icon"]}>
                         <Info className={`${styles["icon-asset"]} ${styles["icon-white"]}`} size={16} />
                     </span>
-                    <h2>Thông tin tệp tin</h2>
+                    <h2>File details</h2>
                 </div>
                 <button
                     className={`${styles["icon-button"]} ${styles["icon-button--light"]}`}
@@ -150,9 +150,9 @@ export function FileInspector({
                 </section>
 
                 <section className={styles["metadata-section"]}>
-                    <h3>THUỘC TÍNH KỸ THUẬT</h3>
+                    <h3>FILE DETAILS</h3>
 
-                    <MetadataItem label="Tên tệp gốc">
+                    <MetadataItem label="Original name">
                         <div className={styles["value-with-action"]}>
                             <span title={file.metadata.originalName}>
                                 {file.metadata.originalName}
@@ -164,21 +164,21 @@ export function FileInspector({
                         </div>
                     </MetadataItem>
 
-                    <MetadataItem label="Định dạng (MIME Type)" mono>
+                    <MetadataItem label="MIME Type" mono>
                         {file.metadata.contentType || "application/octet-stream"}
                     </MetadataItem>
 
-                    <MetadataItem label="Kích thước lưu trữ" mono>
+                    <MetadataItem label="File storage size" mono>
                         <span className={styles["inline-detail"]}>
                             {formatFileSize2(file.length)}
                         </span>
                     </MetadataItem>
 
-                    <MetadataItem label="Thời gian tải lên" mono>
+                    <MetadataItem label="Upload timestamp" mono>
                         {formatUploadDate(file.uploadDate)}
                     </MetadataItem>
 
-                    <MetadataItem label="ID Document trong MongoDB">
+                    <MetadataItem label="ID Document">
                         <div className={styles["id-label-row"]}>
                             <span />
                             <small>ObjectId</small>
@@ -192,7 +192,7 @@ export function FileInspector({
                         </div>
                     </MetadataItem>
 
-                    <MetadataItem label="Tọa độ lưu trữ vật lý">
+                    <MetadataItem label="Physical storage coordinates">
                         <div className={`${styles["storage-card"]} ${styles.mono}`}>
                             <div>
                                 <span>Bucket:</span>
@@ -213,9 +213,9 @@ export function FileInspector({
                 </section>
 
                 <section className={styles["file-actions"]}>
-                    <h3>THAO TÁC TỆP</h3>
+                    {/* <h3>THAO TÁC TỆP</h3> */}
                     <button
-                        className={`${styles["action-button"]} ${styles["action-button--danger"]}`}
+                        className={`${styles["action-button"]} ${styles["action-button--danger"]} ${isTrashed ? styles["restoreButton"] : ""}`}
                         type="button"
                         aria-pressed={isTrashed}
                         onClick={onTrash}
@@ -225,7 +225,7 @@ export function FileInspector({
                         ) : (
                             <Trash2 className={styles["icon-asset"]} size={15} />
                         )}
-                        {isTrashed ? "Khôi phục tệp" : "Chuyển vào thùng rác"}
+                        {isTrashed ? "Restore file" : "Move to trash"}
                     </button>
                 </section>
             </div>

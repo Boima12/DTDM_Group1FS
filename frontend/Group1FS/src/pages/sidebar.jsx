@@ -39,7 +39,7 @@ function Co_sidebar({
                 onClick={onUploadClick}
             >
                 <FilePlus2 size={17} />
-                <span>Tải tệp lên</span>
+                <span>Upload files</span>
             </button>
 
             <nav className={styles.navigation} aria-label="Điều hướng chính">
@@ -58,14 +58,14 @@ function Co_sidebar({
                     onClick={switchToTrashBin}
                 >
                     <Trash2 size={18} />
-                    <span>Thùng rác</span>
+                    <span>Trash</span>
                     {/* <span className={`${styles.count} ${styles.trashCount}`}>3</span> */}
                 </a>
             </nav>
 
             <div className={styles.storage}>
                 <div className={styles.storageHeader}>
-                    <span><HardDrive size={14} /> Dung lượng lưu trữ</span>
+                    <span><HardDrive size={14} />Storage capacity</span>
                     <strong>28%</strong>
                 </div>
                 <div className={styles.progressTrack}>

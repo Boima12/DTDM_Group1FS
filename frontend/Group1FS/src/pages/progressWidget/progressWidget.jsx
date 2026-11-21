@@ -46,10 +46,10 @@ function Co_progressWidget({
                     <span aria-hidden="true" className={styles.liveDot} />
                     <div className={styles.titleGroup}>
                         <h1 className={styles.title}>
-                            Tiến trình tệp
+                            Progress
                         </h1>
                         <p className={styles.processingCount}>
-                            ({completed ? 0 : items.length} đang xử lý)
+                            ({completed ? 0 : items.length} in process)
                         </p>
                     </div>
                 </div>
@@ -77,7 +77,7 @@ function Co_progressWidget({
             {!isCollapsed && (
                 <div className={styles.body}>
                     <div className={styles.summary}>
-                        <span className={styles.summaryLabel}>Tiến trình:</span>
+                        <span className={styles.summaryLabel}>Bandwidth:</span>
                         <strong className={styles.summaryValue}>{percent}%</strong>
                     </div>
                     {items.map((item) => {
@@ -94,7 +94,7 @@ function Co_progressWidget({
                                             <p className={styles.itemStatus}>
                                                 {item.completed ? (
                                                     <span className={styles.completed}>
-                                                        <CheckCircle2 size={13} /> Hoàn tất
+                                                        <CheckCircle2 size={13} /> Completed
                                                     </span>
                                                 ) : (
                                                     `${formatSize((item.size * percent) / 100)} / ${formatSize(item.size)} · ${percent}%`

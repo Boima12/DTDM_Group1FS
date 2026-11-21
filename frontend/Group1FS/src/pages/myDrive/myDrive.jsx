@@ -91,12 +91,12 @@ function Co_myDrive({
         .filter((file) => category === 'all' || getCategory(file) === category)
         .filter(matchesQuery);
     const categories = [
-        { id: 'all', label: 'Tất cả', icon: Grid2X2 },
-        { id: 'document', label: 'Tài liệu', icon: FileText },
-        { id: 'image', label: 'Hình ảnh', icon: FileImage },
+        { id: 'all', label: 'All', icon: Grid2X2 },
+        { id: 'document', label: 'Documents', icon: FileText },
+        { id: 'image', label: 'Images', icon: FileImage },
         { id: 'video', label: 'Video', icon: FileVideo },
-        { id: 'audio', label: 'Âm thanh', icon: FileAudio },
-        { id: 'other', label: 'Khác', icon: FileCode2 },
+        { id: 'audio', label: 'Audio', icon: FileAudio },
+        { id: 'other', label: 'Other', icon: FileCode2 },
     ];
 
     useEffect(() => {
@@ -221,7 +221,7 @@ const handleMarkDeleteSelected = async () => {
                         type="search"
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
-                        placeholder="Tìm kiếm tệp, thư mục, định dạng..."
+                        placeholder="Search"
                         aria-label="Tìm kiếm tệp"
                     />
                     <kbd>/</kbd>
@@ -233,7 +233,7 @@ const handleMarkDeleteSelected = async () => {
             </header>
 
             <section className={styles.content}>
-                <div className={styles.breadcrumb}><Cloud size={17} /> My Drive <span>›</span> <strong>Tất cả tệp</strong></div>
+                <div className={styles.breadcrumb}><Cloud size={17} /> My Drive <span>›</span> <strong>All files</strong></div>
                 <div className={styles.headingRow}>
                     <div className={styles.categoryTabs}>
                         {categories.map((item) => {
@@ -257,31 +257,31 @@ const handleMarkDeleteSelected = async () => {
                 </div>
 
                 <div className={styles.toolbar}>
-                    <span>Sắp xếp theo: <strong>Độ liên quan</strong> <ChevronDown size={14} /></span>
-                    <span>Đã chọn: <strong>{selected.length}</strong> / {files.length}</span>
+                    <span>Sort by: <strong>Relevant</strong> <ChevronDown size={14} /></span>
+                    <span>Selected: <strong>{selected.length}</strong> / {files.length}</span>
                     <div className={styles.toolbarActions}>
                         <button type="button"
                             onClick={handleDownloadSelected}
                             disabled={selected.length === 0}
                         >
-                            <Upload size={14} /> Tải mục đã chọn
+                            <Upload size={14} /> Download selected
                         </button>
                         <button type="button"
                             onClick={handleMarkDeleteSelected}
                             disabled={selected.length === 0}
                         >
-                            <X size={14} /> Mark delete all selected
+                            <X size={14} /> Move selected to trash
                         </button>
                     </div>
                 </div>
 
                 {error && <div className={styles.error}>{error}</div>}
-                {loading && files.length === 0 && <div className={styles.empty}>Đang tải tệp...</div>}
+                {loading && files.length === 0 && <div className={styles.empty}>Retrieving files...</div>}
                 {!loading && filteredFiles.length === 0 && (
                     <div className={styles.empty}>
                         {normalizedQuery
-                            ? `Không tìm thấy tệp phù hợp với "${query}".`
-                            : 'Chưa có tệp nào.'}
+                            ? `No files found matching "${query}".`
+                            : 'No files available.'}
                     </div>
                 )}
 
@@ -289,7 +289,7 @@ const handleMarkDeleteSelected = async () => {
                     <div className={styles.tableWrap}>
                         <div className={`${styles.tableRow} ${styles.tableHeader}`}>
                             <span />
-                            <span>TÊN TỆP</span><span>KÍCH THƯỚC</span><span>NGÀY TẢI LÊN</span><span>ID DOCUMENT</span><span>THAO TÁC</span>
+                            <span>FILE NAME</span><span>SIZE</span><span>UPLOAD DATE</span><span>DOCUMENT ID</span><span> </span>
                         </div>
                         {filteredFiles.map((file) => (
                             <div className={`${styles.tableRow} ${selected.includes(file._id) ? styles.selectedRow : ''}`} key={file._id}>
@@ -310,7 +310,7 @@ const handleMarkDeleteSelected = async () => {
                                 </div>
                             </div>
                         ))}
-                        <div className={styles.tableFooter}>Hiển thị {filteredFiles.length} trên tổng số {files.length} mục</div>
+                        <div className={styles.tableFooter}>Showing {filteredFiles.length} out of {files.length} items</div>
                     </div>
                 )}
                 

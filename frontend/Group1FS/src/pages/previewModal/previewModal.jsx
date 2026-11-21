@@ -275,7 +275,7 @@ function Co_previewModal({
                             onClick={() => handleDownload(file?._id)}
                         >
                             <Download className={styles["icon-asset"]} size={15} />
-                            <span>Tải xuống</span>
+                            <span>Download</span>
                         </a>
                         <button
                             className={`${styles["info-toggle"]}${inspectorOpen ? ` ${styles["is-active"]}` : ""}`}
@@ -325,13 +325,13 @@ function Co_previewModal({
                             transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom / 100}) rotate(${rotation}deg)`,
                         }}
                     >
-                        {previewLoading && <div className={styles["preview-status"]}>Đang tải bản xem trước...</div>}
+                        {previewLoading && <div className={styles["preview-status"]}>Loading the preview...</div>}
                         {!previewLoading && previewError && (
-                            <div className={styles["preview-status"]}>Không thể xem trước: {previewError}</div>
+                            <div className={styles["preview-status"]}>Cannot preview: {previewError}</div>
                         )}
                         {!previewLoading && !previewError && !isPreviewable && (
                             <div className={styles["preview-status"]}>
-                                Định dạng tệp này không hỗ trợ xem trước.
+                                This file format is not supported for preview.
                             </div>
                         )}
                         {!previewLoading && !previewError && isImagePreview && previewUrl && (
@@ -351,12 +351,12 @@ function Co_previewModal({
                         )}
                         {!previewLoading && !previewError && isVideoPreview && previewUrl && (
                             <video className={styles["media-preview"]} controls src={previewUrl}>
-                                Trình duyệt không hỗ trợ phát video này.
+                                The browser does not support video playback.
                             </video>
                         )}
                         {!previewLoading && !previewError && isAudioPreview && previewUrl && (
                             <audio className={styles["audio-preview"]} controls src={previewUrl}>
-                                Trình duyệt không hỗ trợ phát âm thanh này.
+                                The browser does not support audio playback.
                             </audio>
                         )}
                         {!previewLoading && !previewError && isTextPreview && (
@@ -366,7 +366,7 @@ function Co_previewModal({
 
                     <div className={styles["helper-pill"]}>
                         <Mouse className={styles["icon-asset"]} size={14} />
-                        <span>Cuộn chuột để thu phóng · Kéo để di chuyển vị trí xem</span>
+                        <span>Scroll to zoom · Drag to pan</span>
                     </div>
                 </div>
             </section>

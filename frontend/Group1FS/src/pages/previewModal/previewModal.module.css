@@ -643,6 +643,11 @@
     line-height: 16px;
     text-decoration: none;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.action-button:hover {
+    filter: brightness(0.9);
 }
 
 .action-button--primary {
@@ -656,8 +661,9 @@
     color: #93000a;
 }
 
-.action-button--danger:hover {
-    background: #ffc9c3;
+.restoreButton {
+    background: #97f5cc;
+    color: #006948;
 }
 
 .icon-asset {

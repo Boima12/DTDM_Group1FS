@@ -7,8 +7,6 @@ import Co_renameModal from './renameModal/renameModal.jsx';
 import Co_dragAndDropModal from './dragAndDropModal/dragAndDropModal.jsx';
 import Co_progressWidget from './progressWidget/progressWidget.jsx';
 import Co_trashBin from './trashBin/trashBin.jsx';
-import Co_confirmDeleteModal from './trashBin/confirmDeleteModal.jsx';
-import Co_confirmDeleteSelectedModal from './trashBin/confirmDeleteSelectedModal.jsx';
 import Co_notificationPopup from './notificationPopup/notificationPopup.jsx';
 
 function Co_mainContainer({ 
@@ -146,9 +144,6 @@ function Co_mainContainer({
                 completed={uploadProgress.completed}
                 onClose={() => setUploadProgress((current) => ({ ...current, visible: false }))}
             />
-            <Co_confirmDeleteModal />
-            <Co_confirmDeleteSelectedModal />
-
             {/* main content, only 1 can be displayed at a time */}
             {activeMainContainer === "myDrive" && (
                 <Co_myDrive 

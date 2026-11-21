@@ -107,20 +107,20 @@ function Co_moreMenuModal({
             });
 
             onRefresh?.(true);
-            onNotification?.(`Đã chuyển vào thùng rác tệp tin ID: ${targetId}`);
+            onNotification?.(`Moved to trash: ${targetId}`);
         } catch (err) {
-            onNotification?.(`Mark as delete failed: ${err.response?.data?.msg || err.message}`);
+            onNotification?.(`Move to trash failed: ${err.response?.data?.msg || err.message}`);
         } finally {
             onClose?.();
         }
     };
 
     const menuOptions = [
-        { label: 'Xem trước', icon: Eye, action: executePreview },
-        { label: 'Tải xuống', icon: Download, action: executeDownload },
-        { label: 'Đổi tên', icon: Pencil, action: executeRename },
-        { label: 'Thông tin tệp tin', icon: Info, action: executeInfo },
-        { label: 'Chuyển vào thùng rác', icon: Trash2, action: executeDelete, destructive: true },
+        { label: 'Preview', icon: Eye, action: executePreview },
+        { label: 'Download', icon: Download, action: executeDownload },
+        { label: 'Rename', icon: Pencil, action: executeRename },
+        { label: 'Details', icon: Info, action: executeInfo },
+        { label: 'Move to Trash', icon: Trash2, action: executeDelete, destructive: true },
     ];
 
     return createPortal(

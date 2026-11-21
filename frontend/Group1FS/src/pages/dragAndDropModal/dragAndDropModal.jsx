@@ -108,11 +108,11 @@ function Co_dragAndDropModal({
             setFiles([]);
             onClose();
         } catch (err) {
-            setError(`Tải lên thất bại: ${err.response?.data?.msg || err.message}`);
+            setError(`Upload failed: ${err.response?.data?.msg || err.message}`);
         } finally {
             setUploading(false);
             onRefresh();
-            onNotification(`Tải lên ${files.length} tệp hoàn tất`);
+            onNotification(`Upload ${files.length} files complete`);
         }
     };
 
@@ -133,7 +133,7 @@ function Co_dragAndDropModal({
                 <header className={styles['modal-header']}>
                     <div className={styles['modal-heading']}>
                         <span className={styles['cloud-icon']}><Cloud size={22} /></span>
-                        <h1 id="upload-title">Tải tệp lên</h1>
+                        <h1 id="upload-title">Uploads</h1>
                     </div>
                     <button className={`${styles['icon-button']} ${styles.close}`} type="button" aria-label="Đóng" onClick={close}>
                         <X size={18} />
@@ -153,10 +153,10 @@ function Co_dragAndDropModal({
                     >
                         <span className={styles['upload-icon']}><UploadCloud size={30} /></span>
                         <p className={styles['drop-title']}>
-                            Kéo và thả tệp vào đây hoặc{' '}
-                            <button type="button" onClick={() => inputRef.current?.click()}>Duyệt từ máy tính</button>
+                            Drag and drop the file here or{' '}
+                            <button type="button" onClick={() => inputRef.current?.click()}>Browse from computer</button>
                         </p>
-                        <p className={styles['drop-note']}>Giới hạn dung lượng tối đa hiện tại là 100 MB cho mỗi file</p>
+                        <p className={styles['drop-note']}>Maximum 100MB per file</p>
                         <input ref={inputRef} type="file" multiple hidden onChange={onBrowse} />
                     </div>
 
@@ -165,12 +165,12 @@ function Co_dragAndDropModal({
                     <section className={styles.queue} aria-label="Hàng đợi tải lên">
                         <div className={styles['queue-header']}>
                             <div className={styles['queue-title']}>
-                                <span>Hàng đợi tải lên</span>
-                                <span className={styles.count}>{files.length} tệp</span>
+                                <span>Upload queue</span>
+                                <span className={styles.count}>{files.length} files</span>
                             </div>
                             <div className={styles['queue-summary']}>
-                                <span>Dung lượng dự kiến: {formatSize(files.reduce((sum, item) => sum + item.file.size, 0))}</span>
-                                <button type="button" onClick={() => setFiles([])}>Xóa tất cả</button>
+                                <span>Estimated capacity: {formatSize(files.reduce((sum, item) => sum + item.file.size, 0))}</span>
+                                <button type="button" onClick={() => setFiles([])}>Clear all</button>
                             </div>
                         </div>
                         <div className={styles['queue-list']}>
@@ -186,14 +186,14 @@ function Co_dragAndDropModal({
                                                     <span className={styles['file-size']}>{formatSize(file.size)}</span>
                                                 </div>
                                                 <div className={styles['file-meta']}>
-                                                    <span className={styles.status}><span className={styles['status-dot']} /> Sẵn sàng tải lên</span>
+                                                    <span className={styles.status}><span className={styles['status-dot']} /> Uploads</span>
                                                     <span className={styles.separator}>•</span>
-                                                    <span className={styles.chunks}>Chunks sẽ được xử lý bởi GridFS</span>
+                                                    <span className={styles.chunks}>Chunks will be processed by GridFS</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className={styles['file-actions']}>
-                                            <span className={styles.approved}><CheckCircle2 size={14} /> Đã duyệt</span>
+                                            <span className={styles.approved}><CheckCircle2 size={14} /> Approved</span>
                                             <button className={`${styles['icon-button']} ${styles.small}`} type="button" aria-label={`Xóa ${file.name}`} onClick={() => setFiles((current) => current.filter((item) => item.id !== id))}>
                                                 <Trash2 size={15} />
                                             </button>
@@ -201,16 +201,16 @@ function Co_dragAndDropModal({
                                     </article>
                                 );
                             })}
-                            {files.length === 0 && <div className={styles['empty-queue']}>Chưa có tệp nào trong hàng đợi</div>}
+                            {files.length === 0 && <div className={styles['empty-queue']}>No files in the queue</div>}
                         </div>
                     </section>
                 </div>
 
                 <footer className={styles['modal-footer']}>
-                    <button className={styles['cancel-button']} type="button" onClick={close}>Hủy bỏ</button>
+                    <button className={styles['cancel-button']} type="button" onClick={close}>Cancel</button>
                     <button className={styles['stream-button']} type="button" disabled={files.length === 0 || uploading} onClick={handleUploadItems}>
                         {uploading ? <LoaderCircle className={styles.spinner} size={15} /> : <UploadCloud size={15} />}
-                        {uploading ? 'Đang tải lên...' : `Tải lên ${files.length} tệp`}
+                        {uploading ? 'Uploading...' : `Uploaded ${files.length} files`}
                     </button>
                 </footer>
             </section>

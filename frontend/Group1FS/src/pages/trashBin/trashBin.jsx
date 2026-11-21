@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import api from '../../utils/axios.js';
 import styles from "./trashBin.module.css";
+import Co_confirmDeleteModal from "./confirmDeleteModal.jsx";
+import Co_confirmDeleteSelectedModal from "./confirmDeleteSelectedModal.jsx";
 
 import {
     Archive,
@@ -29,6 +31,7 @@ function Co_trashBin({
     const [selected, setSelected] = useState([]);
     const [loading, setLoading] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
+    const [deleteTarget, setDeleteTarget] = useState(null);
     
     const [query, setQuery] = useState("");
     const searchInput = useRef(null);
@@ -174,7 +177,7 @@ function Co_trashBin({
     };
 
     const deleteFiles = async (ids) => {
-        if (!ids.length) return;
+        if (!ids.length) return false;
         try {
             setActionLoading(true);
             const endpoint = ids.length === 1
@@ -184,12 +187,27 @@ function Co_trashBin({
             setFiles((current) => current.filter((file) => !ids.includes(file._id)));
             setSelected((current) => current.filter((id) => !ids.includes(id)));
             onNotification?.(response.data.msg || `${ids.length} file${ids.length > 1 ? "s" : ""} permanently deleted`);
+            return true;
         } catch (err) {
             setError(`Delete failed: ${err.response?.data?.msg || err.message}`);
+            return false;
         } finally {
             setActionLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (!deleteTarget) return undefined;
+
+        const closeOnEscape = (event) => {
+            if (event.key === "Escape" && !actionLoading) {
+                setDeleteTarget(null);
+            }
+        };
+
+        window.addEventListener("keydown", closeOnEscape);
+        return () => window.removeEventListener("keydown", closeOnEscape);
+    }, [actionLoading, deleteTarget]);
 
     const copyDocumentId = async (id) => {
         try {
@@ -211,7 +229,7 @@ function Co_trashBin({
                         type="search"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Tìm kiếm tệp, thư mục, định dạng..."
+                        placeholder="Search"
                     />
                     <kbd>/</kbd>
                 </label>
@@ -261,7 +279,7 @@ function Co_trashBin({
                             className={styles.deleteSelected}
                             type="button"
                             disabled={!selected.length || actionLoading}
-                            onClick={() => deleteFiles(selected)}
+                            onClick={() => setDeleteTarget({ ids: selected, bulk: true })}
                         >
                             <Trash2 size={14} />
                             Permanently delete selected
@@ -270,128 +288,160 @@ function Co_trashBin({
                 </section>
 
                 {error && <div className={styles.error}>{error}</div>}
-                {loading && files.length === 0 && <div className={styles.empty}>Đang tải tệp...</div>}
-                {!loading && filteredFiles.length === 0 && <div className={styles.empty}>Chưa có tệp nào.</div>}
-
-                <section className={styles.tableWrap} aria-label="Trash files">
-                    <div className={styles.tableScroll}>
-                        <div
-                            className={`${styles.tableRow} ${styles.tableHeader}`}
-                        >
-                            <button
-                                className={`${styles.checkbox} ${allVisibleSelected ? styles.checkboxChecked : ""}`}
-                                type="button"
-                                onClick={toggleAll}
-                                aria-label={
-                                    allVisibleSelected
-                                        ? "Deselect all files"
-                                        : "Select all files"
-                                }
-                            >
-                                {allVisibleSelected && <span>✓</span>}
-                            </button>
-                            <span>File name</span>
-                            <span>Size</span>
-                            <span>Delete date</span>
-                            <span>ID Document</span>
-                            <span aria-hidden="true" />
-                        </div>
-
-                        {filteredFiles.map((file) => {
-                            const isSelected = selected.includes(file._id);
-                            return (
-                                <div
-                                    className={`${styles.tableRow} ${isSelected ? styles.selectedRow : ""}`}
-                                    key={file._id}
-                                >
-                                    <button
-                                        className={`${styles.checkbox} ${isSelected ? styles.checkboxChecked : ""}`}
-                                        type="button"
-                                        onClick={() => toggleSelected(file._id)}
-                                        aria-label={`Select ${file.filename}`}
-                                    >
-                                        {isSelected && <span>✓</span>}
-                                    </button>
-                                    <span className={styles.fileName}>
-                                        <span className={styles.fileIcon}>
-                                            {fileIcon(file)}
-                                        </span>
-                                        <span>
-                                            <strong>{file.filename}</strong>
-                                            <small>Root directory</small>  {/* TODO: nếu có cập nhật thêm tính năng folder thì cập nhập chỗ này - Boima 15/11/2026 */}
-                                        </span>
-                                    </span>
-                                    <code>{formatSize(file.length)}</code>
-                                    <code>{formatDate(file.metadata?.markAsTrashDate)}</code>
-                                    <span className={styles.documentId}>
-                                        <code>{file._id}</code>
-                                        <button
-                                            type="button"
-                                            aria-label={`Copy document ID ${file._id}`}
-                                            onClick={() =>
-                                                copyDocumentId(file._id)
-                                            }
-                                        >
-                                            <Copy size={13} />
-                                        </button>
-                                    </span>
-                                    <div className={styles.rowActions}>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                restoreFiles([file._id])
-                                            }
-                                            disabled={actionLoading}
-                                        >
-                                            <RotateCcw size={12} />
-                                            Restore
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                deleteFiles([file._id])
-                                            }
-                                            disabled={actionLoading}
-                                        >
-                                            <Trash2 size={12} />
-                                            Permanently delete
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })}
-
-                        {!filteredFiles.length && (
-                            <div className={styles.emptyState}>
-                                No files match "{query}".
-                            </div>
-                        )}
+                {loading && files.length === 0 && <div className={styles.empty}>Retrieving files...</div>}
+                {/* {!loading && filteredFiles.length === 0 && <div className={styles.empty}>No files found.</div>} */}
+                {!loading && filteredFiles.length === 0 && (
+                    <div className={styles.empty}>
+                        {normalizedQuery
+                            ? `No files found matching "${query}".`
+                            : 'No files in trash.'}
                     </div>
-                    <footer className={styles.tableFooter}>
-                        <span>
-                            Showing {filteredFiles.length} out of {files.length}{" "}
-                            items
-                        </span>
-                        <span className={styles.pagination}>
-                            Page 1 / 1
-                            <button
-                                type="button"
-                                disabled
-                                aria-label="Previous page"
+                )}
+
+                {filteredFiles.length > 0 && (
+                    <section className={styles.tableWrap} aria-label="Trash files">
+                        <div className={styles.tableScroll}>
+                            <div
+                                className={`${styles.tableRow} ${styles.tableHeader}`}
                             >
-                                <ChevronLeft size={14} />
-                            </button>
-                            <button
-                                type="button"
-                                disabled
-                                aria-label="Next page"
-                            >
-                                <ChevronRight size={14} />
-                            </button>
-                        </span>
-                    </footer>
-                </section>
+                                <button
+                                    className={`${styles.checkbox} ${allVisibleSelected ? styles.checkboxChecked : ""}`}
+                                    type="button"
+                                    onClick={toggleAll}
+                                    aria-label={
+                                        allVisibleSelected
+                                            ? "Deselect all files"
+                                            : "Select all files"
+                                    }
+                                >
+                                    {allVisibleSelected && <span>✓</span>}
+                                </button>
+                                <span>File name</span>
+                                <span>Size</span>
+                                <span>Delete date</span>
+                                <span>ID Document</span>
+                                <span aria-hidden="true" />
+                            </div>
+
+                            {filteredFiles.map((file) => {
+                                const isSelected = selected.includes(file._id);
+                                return (
+                                    <div
+                                        className={`${styles.tableRow} ${isSelected ? styles.selectedRow : ""}`}
+                                        key={file._id}
+                                    >
+                                        <button
+                                            className={`${styles.checkbox} ${isSelected ? styles.checkboxChecked : ""}`}
+                                            type="button"
+                                            onClick={() => toggleSelected(file._id)}
+                                            aria-label={`Select ${file.filename}`}
+                                        >
+                                            {isSelected && <span>✓</span>}
+                                        </button>
+                                        <span className={styles.fileName}>
+                                            <span className={styles.fileIcon}>
+                                                {fileIcon(file)}
+                                            </span>
+                                            <span>
+                                                <strong>{file.filename}</strong>
+                                                <small>Root directory</small>  {/* TODO: nếu có cập nhật thêm tính năng folder thì cập nhập chỗ này - Boima 15/11/2026 */}
+                                            </span>
+                                        </span>
+                                        <code>{formatSize(file.length)}</code>
+                                        <code>{formatDate(file.metadata?.markAsTrashDate)}</code>
+                                        <span className={styles.documentId}>
+                                            <code>{file._id}</code>
+                                            <button
+                                                type="button"
+                                                aria-label={`Copy document ID ${file._id}`}
+                                                onClick={() =>
+                                                    copyDocumentId(file._id)
+                                                }
+                                            >
+                                                <Copy size={13} />
+                                            </button>
+                                        </span>
+                                        <div className={styles.rowActions}>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    restoreFiles([file._id])
+                                                }
+                                                disabled={actionLoading}
+                                            >
+                                                <RotateCcw size={12} />
+                                                Restore
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setDeleteTarget({
+                                                        ids: [file._id],
+                                                        fileName: file.filename,
+                                                    })
+                                                }
+                                                disabled={actionLoading}
+                                            >
+                                                <Trash2 size={12} />
+                                                Permanently delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+
+                            {!filteredFiles.length && (
+                                <div className={styles.emptyState}>
+                                    No files match "{query}".
+                                </div>
+                            )}
+                        </div>
+                        <footer className={styles.tableFooter}>
+                            <span>
+                                Showing {filteredFiles.length} out of {files.length}{" "}
+                                items
+                            </span>
+                            <span className={styles.pagination}>
+                                Page 1 / 1
+                                <button
+                                    type="button"
+                                    disabled
+                                    aria-label="Previous page"
+                                >
+                                    <ChevronLeft size={14} />
+                                </button>
+                                <button
+                                    type="button"
+                                    disabled
+                                    aria-label="Next page"
+                                >
+                                    <ChevronRight size={14} />
+                                </button>
+                            </span>
+                        </footer>
+                    </section>
+                )}
             </main>
+            <Co_confirmDeleteModal
+                visible={Boolean(deleteTarget && !deleteTarget.bulk)}
+                fileName={deleteTarget?.fileName}
+                loading={actionLoading}
+                onClose={() => !actionLoading && setDeleteTarget(null)}
+                onConfirm={async () => {
+                    const deleted = await deleteFiles(deleteTarget?.ids || []);
+                    if (deleted) setDeleteTarget(null);
+                }}
+            />
+            <Co_confirmDeleteSelectedModal
+                visible={Boolean(deleteTarget?.bulk)}
+                count={deleteTarget?.ids?.length || 0}
+                loading={actionLoading}
+                onClose={() => !actionLoading && setDeleteTarget(null)}
+                onConfirm={async () => {
+                    const deleted = await deleteFiles(deleteTarget?.ids || []);
+                    if (deleted) setDeleteTarget(null);
+                }}
+            />
         </div>
     );
 }

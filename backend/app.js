@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require('express')
 const cors = require('cors')
 const dns = require('dns')
@@ -13,17 +14,23 @@ const app = express()
 
 // middleware
 app.use(express.json())
-app.use(express.static('./public'))
+app.use(express.static(path.join(__dirname, 'public')))
 
-// Enable CORS (for development only, can be remove if put frontend into ./public)
-app.use(cors({
-    origin: process.env.FRONTEND_URL,   // frontend vite default port is 5173
-    credentials: true,   
-    exposedHeaders: ['Content-Disposition']            
-}));
+if (process.env.FRONTEND_URL) {
+    app.use(cors({
+        origin: process.env.FRONTEND_URL,
+        credentials: true,
+        exposedHeaders: ['Content-Disposition']
+    }))
+}
 
 // routes
 app.use('/api/v1/fsfiles', fsFiles)
+
+// SPA fallback for frontend routes
+app.get('/*splat', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'))
+})
 
 // errors handling
 app.use(notFoundMiddleware)

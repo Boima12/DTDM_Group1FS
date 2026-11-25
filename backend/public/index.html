@@ -2,14 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23007a5c'/%3E%3Cpath d='M11 22h10.5a4.5 4.5 0 0 0 .8-8.93A6 6 0 0 0 10.6 11.2 4 4 0 0 0 11 22Z' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <link href="/src/style.css" rel="stylesheet"> -->
-    <title>Group1FS</title>
-    <script type="module" crossorigin src="/assets/index-1yg3n4wl.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-Bge2nxaV.css">
+    <meta name="description" content="Group1FS v2.0 — Cloud File Storage & GridFS Architecture Showcase" />
+    <title>Group1FS — Cloud Storage</title>
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('g1fs_theme');
+          var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {}
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-UIMrUcjj.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CcbtUeu-.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"></div>
   </body>
 </html>

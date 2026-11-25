@@ -1,11 +1,329 @@
 @import './assets/fonts/fonts.css';
 @import "tailwindcss";
 
-html, body {
-  margin: 0;  /* body margin issue */
+:root {
+  --bg-app: #f6f8fc;
+  --bg-surface: #ffffff;
+  --bg-subtle: #eff4fb;
+  --bg-hover: #edf7f3;
+  --bg-selected: #e0f9ef;
+  --bg-elevated: #ffffff;
+  --bg-overlay: rgba(15, 23, 42, 0.48);
+
+  --border-subtle: #e7ecf4;
+  --border-strong: #d0dae8;
+
+  --text-primary: #132033;
+  --text-secondary: #495970;
+  --text-muted: #76859b;
+
+  --accent: #007a5c;
+  --accent-hover: #00644b;
+  --accent-soft: #d7f7ea;
+  --accent-text: #00664d;
+
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --danger-soft: #fee2e2;
+
+  --warning: #d97706;
+  --warning-soft: #fef3c7;
+
+  --info: #2563eb;
+  --info-soft: #dbeafe;
+
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 10px 28px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 24px 56px rgba(15, 23, 42, 0.18);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  --font-sans: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+[data-theme="dark"] {
+  --bg-app: #0b111b;
+  --bg-surface: #111927;
+  --bg-subtle: #182334;
+  --bg-hover: #142b29;
+  --bg-selected: rgba(16, 185, 129, 0.16);
+  --bg-elevated: #162133;
+  --bg-overlay: rgba(2, 6, 14, 0.72);
+
+  --border-subtle: #223047;
+  --border-strong: #31435f;
+
+  --text-primary: #f1f5fb;
+  --text-secondary: #b7c5d9;
+  --text-muted: #7e90a9;
+
+  --accent: #10b981;
+  --accent-hover: #059669;
+  --accent-soft: rgba(16, 185, 129, 0.16);
+  --accent-text: #34d399;
+
+  --danger: #f87171;
+  --danger-hover: #ef4444;
+  --danger-soft: rgba(239, 68, 68, 0.16);
+
+  --warning: #fbbf24;
+  --warning-soft: rgba(245, 158, 11, 0.16);
+
+  --info: #60a5fa;
+  --info-soft: rgba(59, 130, 246, 0.16);
+
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
   padding: 0;
   height: 100%;
+  font-family: var(--font-sans);
+  background: var(--bg-app);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
 
-  /* overflow-x: hidden will disable scroll tracking for somereason(not sure why? need more investigate), recommend use the line below inside App.module.css or App.scss */ 
-  /* overflow-x: hidden; */     /* position: fixed; issue */
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+code, pre, kbd, .mono {
+  font-family: var(--font-mono);
+}
+
+/* Custom sleek scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* App Shell Layout */
+.g1-shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-app);
+}
+
+.g1-main-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.g1-content-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 24px 36px;
+}
+
+/* Reusable semantic surfaces & buttons */
+.g1-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.g1-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 120ms ease, opacity 150ms ease;
+  white-space: nowrap;
+}
+.g1-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.g1-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.g1-btn-primary {
+  background: var(--accent);
+  color: #ffffff;
+}
+.g1-btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.g1-btn-secondary {
+  background: var(--bg-surface);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+.g1-btn-secondary:hover:not(:disabled) {
+  background: var(--bg-subtle);
+}
+
+.g1-btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+.g1-btn-ghost:hover:not(:disabled) {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+.g1-btn-danger {
+  background: var(--danger);
+  color: #ffffff;
+}
+.g1-btn-danger:hover:not(:disabled) {
+  background: var(--danger-hover);
+}
+
+.g1-btn-danger-soft {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.g1-btn-danger-soft:hover:not(:disabled) {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+.g1-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.g1-icon-btn:hover:not(:disabled) {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+.g1-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.g1-input {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.g1-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.g1-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(5px);
+  animation: g1FadeIn 150ms ease-out;
+}
+
+.g1-modal-box {
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  animation: g1PopIn 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Skeleton shimmer */
+.g1-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-subtle) 25%,
+    var(--border-subtle) 50%,
+    var(--bg-subtle) 75%
+  );
+  background-size: 200% 100%;
+  animation: g1Shimmer 1.4s infinite linear;
+  border-radius: var(--radius-sm);
+}
+
+.g1-spin {
+  animation: g1Spin 0.9s linear infinite;
+}
+
+.g1-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+@keyframes g1Shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes g1Spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes g1FadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes g1PopIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 840px) {
+  .g1-content-scroll {
+    padding: 14px 14px 32px;
+  }
 }

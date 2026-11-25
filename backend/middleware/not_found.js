@@ -1,5 +1,12 @@
-const notFound = (req, res) => {
-    res.status(404).send('<h1>Resource Not Found</h1>')
-}
+const { StatusCodes } = require('http-status-codes');
 
-module.exports = notFound
+const notFound = (req, res) => {
+    if (req.originalUrl.startsWith('/api/')) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+            msg: `API endpoint not found: ${req.method} ${req.originalUrl}`,
+        });
+    }
+    return res.status(StatusCodes.NOT_FOUND).send('<h1>404 — Resource Not Found</h1>');
+};
+
+module.exports = notFound;

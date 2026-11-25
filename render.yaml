@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: group1fs-cloud
+    runtime: node
+    plan: free
+    region: singapore
+    healthCheckPath: /api/v1/health
+    buildCommand: >-
+      cd frontend/Group1FS && npm ci && VITE_MODE=production VITE_BACKEND_PRODUCTION_URL=/api/v1 npm run build
+      && rm -rf ../../backend/public/* && cp -r dist/* ../../backend/public/
+      && cd ../../backend && npm ci --omit=dev
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: MONGO_DB_NAME
+        value: GROUP1FS
+      - key: JWT_SECRET
+        generateValue: true
+      - key: STORAGE_QUOTA_BYTES
+        value: "5368709120"
+      - key: MAX_FILE_SIZE_BYTES
+        value: "104857600"
+      - key: TRASH_RETENTION_DAYS
+        value: "30"
+      - key: ENABLE_DEMO_AUTO_LOGIN
+        value: "true"

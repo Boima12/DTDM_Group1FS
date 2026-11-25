@@ -1,18 +1,34 @@
-# Starting up
+# Starting up Group1FS v2.0
 
-## 1. Run backend
-- cd into backend and run:
+## 1. Local Development
+### Backend (Port 5000)
 ```cmd
-cd backend 
-npm start
+cd backend
+npm run dev
 ```
-<br><br>
+*(Production start: `npm start` runs `node app.js`)*
 
+### Seed Sample Demo Files (Optional)
+```cmd
+cd backend
+npm run seed:demo
+```
 
-## 2. Run frontend
-- use a seperate terminal, cd into frontend and run:
+### Run Backend Integration Tests
+```cmd
+cd backend
+npm test
+```
+
+### Frontend (Port 5173)
 ```cmd
 cd frontend\Group1FS
 npm run dev
 ```
-<br><br>
+
+## 2. Full-Stack Offline Demo via Docker Compose (Port 5000)
+```cmd
+docker compose up --build -d
+docker compose exec group1fs npm run seed:demo
+```
+Open: `http://localhost:5000`
